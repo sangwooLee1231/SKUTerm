@@ -17,6 +17,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -133,5 +134,47 @@ public class AuthController {
                         "토큰 재발급 성공.",
                         Map.of("accessToken", tokens.get("accessToken"))
                 )
-        );      }
+        );
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<ResponseDto<Void>> logout(
+            @AuthenticationPrincipal org.springframework.security.core.userdetails.User user,
+            HttpServletResponse response
+    ) {
+        // 현재 로그인한 학번
+        String studentNumber = user.getUsername();
+
+        // Redis에 저장된 refreshToken 삭제
+        authService.logout(studentNumber);
+
+        // 쿠키 삭제 (maxAge=0)
+        ResponseCookie accessCookie = ResponseCookie.from("accessToken", "")
+                .httpOnly(true)
+                .secure(false)
+                .path("/")
+                .maxAge(0)
+                .sameSite("Strict")
+                .build();
+
+        ResponseCookie refreshCookie = ResponseCookie.from("refreshToken", "")
+                .httpOnly(true)
+                .secure(false)
+                .path("/")
+                .maxAge(0)
+                .sameSite("Strict")
+                .build();
+
+        response.addHeader(HttpHeaders.SET_COOKIE, accessCookie.toString());
+        response.addHeader(HttpHeaders.SET_COOKIE, refreshCookie.toString());
+
+        return ResponseEntity.ok(
+                new ResponseDto<>(
+                        HttpStatus.OK.value(),
+                        "로그아웃에 성공했습니다.",
+                        null
+                )
+        );
+
+    }
 }

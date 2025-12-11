@@ -95,4 +95,10 @@ public class AuthServiceImpl implements AuthService {
         tokens.put("refreshToken", newRefreshToken);
         return tokens;
     }
+
+    @Override
+    public void logout(String studentNumber) {
+        redisTemplate.delete(studentNumber);
+        log.info("Logout - refreshToken removed for studentNumber={}", studentNumber);
+    }
 }

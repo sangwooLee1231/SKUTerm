@@ -49,9 +49,10 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
                                 "/",
-                                "/member/login",
-                                "/member/signup",
-                                "/api/auth/**",   // 회원가입/로그인 API
+                                "/auth/login",
+                                "/auth/signup",
+                                "/api/auth/login",
+                                "/api/auth/signup",
                                 "/css/**",
                                 "/js/**",
                                 "/images/**"

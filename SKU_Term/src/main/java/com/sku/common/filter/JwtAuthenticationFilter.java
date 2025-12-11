@@ -1,6 +1,10 @@
 package com.sku.common.filter;
 
+import com.sku.common.exception.CustomException;
 import com.sku.common.jwt.JwtTokenProvider;
+import com.sku.common.util.ErrorCode;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
@@ -21,12 +25,31 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-        String token = resolveToken((HttpServletRequest) request);
 
-        if (token != null && jwtTokenProvider.validateToken(token)) {
+        HttpServletRequest httpRequest = (HttpServletRequest) request;
+
+        // 쿠키에서 accessToken 추출
+        String token = resolveToken(httpRequest);
+
+        if (token == null || token.isBlank()) {
+            chain.doFilter(request, response);
+            return;
+        }
+
+        try {
+            // 3. 토큰 유효성 검증 (만료/위조 등 확인)
+            jwtTokenProvider.validateToken(token);
+
+            // 4. 인증 객체 생성하여 SecurityContext에 저장
             Authentication authentication = jwtTokenProvider.getAuthentication(token);
             SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        } catch (ExpiredJwtException e) {
+            throw new CustomException(ErrorCode.SESSION_EXPIRED, e);
+        } catch (JwtException | IllegalArgumentException e) {
+            throw new CustomException(ErrorCode.LOGIN_REQUIRED, e);
         }
+
         chain.doFilter(request, response);
     }
 
