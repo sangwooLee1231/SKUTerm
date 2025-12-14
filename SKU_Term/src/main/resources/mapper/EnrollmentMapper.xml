@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sku.enrollment.mapper.EnrollmentMapper">
+
+    <!-- 이미 해당 강의를 신청했는지 확인 -->
+    <select id="existsEnrollment" resultType="int">
+        SELECT COUNT(*)
+        FROM Enrollment
+        WHERE ENROLLMENT_STUDENT_ID = #{studentId}
+          AND ENROLLMENT_LECTURE_ID = #{lectureId}
+    </select>
+
+    <!-- 수강신청 INSERT -->
+    <insert id="insertEnrollment">
+        INSERT INTO Enrollment (
+            ENROLLMENT_STUDENT_ID,
+            ENROLLMENT_LECTURE_ID
+        ) VALUES (
+                     #{studentId},
+                     #{lectureId}
+                 )
+    </insert>
+
+    <!-- 수강신청 삭제 -->
+    <delete id="deleteEnrollment">
+        DELETE FROM Enrollment
+        WHERE ENROLLMENT_STUDENT_ID = #{studentId}
+          AND ENROLLMENT_LECTURE_ID = #{lectureId}
+    </delete>
+
+    <!-- 현재 신청 학점 합계 -->
+    <select id="sumCreditsByStudent" resultType="int">
+        SELECT IFNULL(SUM(L.LECTURE_CREDIT), 0)
+        FROM Enrollment E
+                 JOIN Lecture L
+                      ON E.ENROLLMENT_LECTURE_ID = L.LECTURE_ID
+        WHERE E.ENROLLMENT_STUDENT_ID = #{studentId}
+    </select>
+
+    <!-- 이미 신청한 강의들의 시간 정보 -->
+    <select id="findEnrolledLectureTimes"
+            resultType="com.sku.lecture.vo.LectureTime">
+        SELECT
+            LT.LECTURETIME_ID          AS id,
+            LT.LECTURETIME_LECTURE_ID  AS lectureId,
+            LT.LECTURETIME_DAY_OF_WEEK AS dayOfWeek,
+            LT.LECTURETIME_START_TIME  AS startTime,
+            LT.LECTURETIME_END_TIME    AS endTime
+        FROM Enrollment E
+                 JOIN Lecturetime LT
+                      ON E.ENROLLMENT_LECTURE_ID = LT.LECTURETIME_LECTURE_ID
+        WHERE E.ENROLLMENT_STUDENT_ID = #{studentId}
+        ORDER BY
+            FIELD(LT.LECTURETIME_DAY_OF_WEEK, 'MON','TUE','WED','THU','FRI','SAT','SUN'),
+            LT.LECTURETIME_START_TIME ASC
+    </select>
+
+    <!-- 내 수강신청 목록 조회 (강의 정보 포함, F-303) -->
+    <select id="findMyEnrollments"
+            resultType="com.sku.enrollment.dto.EnrollmentListResponseDto">
+        SELECT
+            E.ENROLLMENT_ID         AS enrollmentId,
+            L.LECTURE_ID            AS lectureId,
+            L.LECTURE_COURSE_NAME   AS courseName,
+            L.LECTURE_PROFESSOR     AS professor,
+            L.LECTURE_CREDIT        AS credit,
+            L.LECTURE_DIVISION      AS division,
+            L.LECTURE_ROOM          AS room,
+            E.ENROLLMENT_CREATED_AT AS createdAt
+        FROM Enrollment E
+                 JOIN Lecture L
+                      ON E.ENROLLMENT_LECTURE_ID = L.LECTURE_ID
+        WHERE E.ENROLLMENT_STUDENT_ID = #{studentId}
+        ORDER BY E.ENROLLMENT_CREATED_AT DESC
+    </select>
+
+    <!-- 실시간 정원 체크 + 1 증가 (F-305용 기본 버전) -->
+    <update id="increaseCurrentCountIfNotFull">
+        UPDATE Lecture
+        SET LECTURE_CURRENT_COUNT = LECTURE_CURRENT_COUNT + 1
+        WHERE LECTURE_ID = #{lectureId}
+          AND LECTURE_CURRENT_COUNT < LECTURE_MAX_CAPACITY
+    </update>
+
+    <!-- 수강 취소 시 정원 -1 -->
+    <update id="decreaseCurrentCount">
+        UPDATE Lecture
+        SET LECTURE_CURRENT_COUNT = LECTURE_CURRENT_COUNT - 1
+        WHERE LECTURE_ID = #{lectureId}
+          AND LECTURE_CURRENT_COUNT > 0
+    </update>
+
+</mapper>
