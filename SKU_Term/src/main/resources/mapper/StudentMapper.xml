@@ -4,6 +4,7 @@
 
 <mapper namespace="com.sku.member.mapper.StudentMapper">
 
+    <!-- 학번으로 학생 조회 (로그인용) -->
     <select id="findByStudentNumber" resultType="com.sku.member.vo.Student">
         SELECT
             STUDENT_ID          AS id,
@@ -17,10 +18,16 @@
         WHERE STUDENT_NUMBER = #{studentNumber}
     </select>
 
-    <insert id="insertStudent"
-            parameterType="com.sku.member.vo.Student"
-            useGeneratedKeys="true"
-            keyProperty="id">
+    <!-- 학번 중복 여부 체크 -->
+    <select id="existsByStudentNumber" resultType="int">
+        SELECT COUNT(*)
+        FROM Student
+        WHERE STUDENT_NUMBER = #{studentNumber}
+    </select>
+
+    <!-- 회원가입 insert -->
+    <insert id="insertStudent" parameterType="com.sku.member.vo.Student"
+            useGeneratedKeys="true" keyProperty="id">
         INSERT INTO Student (
             STUDENT_NUMBER,
             STUDENT_PASSWORD,

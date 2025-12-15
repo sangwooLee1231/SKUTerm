@@ -49,10 +49,10 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
                                 "/",
-                                "/auth/login",
-                                "/auth/signup",
                                 "/api/auth/login",
                                 "/api/auth/signup",
+                                "/member/login",
+                                "/member/signup",
                                 "/css/**",
                                 "/js/**",
                                 "/images/**"

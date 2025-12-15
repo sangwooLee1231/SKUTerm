@@ -38,7 +38,6 @@ public class AuthController {
     public ResponseEntity<ResponseDto<Map<String, Object>>> signUp(
             @Valid @RequestBody MemberSignUpRequestDto requestDto
     ) {
-        memberService.signUp(requestDto);
         Long studentId = memberService.signUp(requestDto);
 
 

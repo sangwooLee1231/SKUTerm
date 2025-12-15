@@ -1,0 +1,267 @@
+/* ==== 기본 설정 ==== */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html, body {
+    height: 100%;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    background-color: #f5f6f8;
+    color: #111827;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* ==== 전체 레이아웃 ==== */
+
+.login-page {
+    min-height: 100vh;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 40px 16px;
+}
+
+.login-wrap {
+    width: 100%;
+    max-width: 960px;
+    background-color: #ffffff;
+    border-radius: 6px;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.08);
+    display: flex;
+    padding: 32px 32px 28px;
+    gap: 40px;
+}
+
+/* 왼쪽: 로그인 영역 */
+
+.login-panel {
+    flex: 1 1 55%;
+    border-right: 1px solid #e5e7eb;
+    padding-right: 32px;
+}
+
+.login-title {
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 24px;
+}
+
+.login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.login-form-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.login-form-row label {
+    width: 70px; /* "아이디", "비밀번호" 정렬 */
+    font-size: 14px;
+    color: #374151;
+}
+
+.login-input-wrap {
+    flex: 1;
+}
+
+.login-input {
+    width: 100%;
+    border-radius: 4px;
+    border: 1px solid #d1d5db;
+    padding: 8px 10px;
+    font-size: 13px;
+    background-color: #ffffff;
+    outline: none;
+}
+
+.login-input::placeholder {
+    color: #9ca3af;
+}
+
+.login-input:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.12);
+}
+
+/* 구분선 */
+
+.login-divider {
+    margin: 20px 0 12px;
+    border-top: 1px solid #e5e7eb;
+}
+
+/* 안내 문구 (왼쪽 아래) */
+
+.login-notes {
+    list-style: none;
+    font-size: 12px;
+    color: #6b7280;
+    line-height: 1.5;
+    margin-bottom: 16px;
+}
+
+.login-notes li + li {
+    margin-top: 4px;
+}
+
+.login-notes strong {
+    font-weight: 600;
+}
+
+/* 로그인 버튼 */
+
+.login-button-area {
+    display: flex;
+    justify-content: flex-start;
+}
+
+.login-submit-btn {
+    min-width: 140px;
+    padding: 10px 18px;
+    border-radius: 4px;
+    border: 1px solid #15803d;
+    background-color: #15803d; /* 짙은 초록 (포털 느낌) */
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.12s ease-out, border-color 0.12s ease-out,
+    box-shadow 0.12s ease-out, transform 0.12s ease-out;
+}
+
+.login-submit-btn:hover {
+    background-color: #166534;
+    border-color: #166534;
+    box-shadow: 0 4px 10px rgba(22, 101, 52, 0.35);
+    transform: translateY(-1px);
+}
+
+.login-submit-btn:active {
+    background-color: #166534;
+    border-color: #166534;
+    box-shadow: 0 2px 6px rgba(22, 101, 52, 0.25);
+    transform: translateY(0);
+}
+
+/* 로그인 결과 메시지 */
+
+.login-message {
+    min-height: 18px;
+    font-size: 12px;
+    margin-top: 8px;
+}
+
+.login-message.success {
+    color: #15803d;
+}
+
+.login-message.error {
+    color: #dc2626;
+}
+
+/* ==== 오른쪽: 안내 영역 ==== */
+
+.login-side {
+    flex: 1 1 45%;
+    padding-left: 4px;
+    font-size: 12px;
+    color: #4b5563;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 18px;
+}
+
+.login-side-top ul {
+    list-style: none;
+}
+
+.login-side-top li {
+    position: relative;
+    padding-left: 12px;
+    line-height: 1.5;
+}
+
+.login-side-top li::before {
+    content: "▪";
+    position: absolute;
+    left: 0;
+    top: 0;
+    color: #16a34a;
+}
+
+.login-side-top li + li {
+    margin-top: 4px;
+}
+
+.login-side-top a {
+    color: #b91c1c;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.login-side-top a:hover {
+    text-decoration: underline;
+}
+
+/* 오른쪽 하단 버튼 */
+
+.login-side-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 6px;
+}
+
+.login-side-btn {
+    flex: 0 0 auto;
+    padding: 6px 10px;
+    font-size: 12px;
+    border-radius: 4px;
+    border: 1px solid #d1d5db;
+    background-color: #ffffff;
+    cursor: pointer;
+    transition: background-color 0.12s ease-out, border-color 0.12s ease-out;
+}
+
+.login-side-btn:hover {
+    background-color: #f3f4f6;
+    border-color: #9ca3af;
+}
+
+/* ==== 반응형 ==== */
+
+@media (max-width: 860px) {
+    .login-wrap {
+        flex-direction: column;
+        padding: 24px 20px 22px;
+        gap: 24px;
+    }
+
+    .login-panel {
+        border-right: none;
+        padding-right: 0;
+        border-bottom: 1px solid #e5e7eb;
+        padding-bottom: 20px;
+    }
+
+    .login-side {
+        padding-left: 0;
+    }
+}
+
+@media (max-width: 480px) {
+    .login-wrap {
+        padding: 20px 16px 18px;
+    }
+}
