@@ -57,7 +57,7 @@
             LT.LECTURETIME_START_TIME ASC
     </select>
 
-    <!-- 내 수강신청 목록 조회 (강의 정보 포함, F-303) -->
+    <!-- 내 수강신청 목록 조회 -->
     <select id="findMyEnrollments"
             resultType="com.sku.enrollment.dto.EnrollmentListResponseDto">
         SELECT
@@ -76,12 +76,12 @@
         ORDER BY E.ENROLLMENT_CREATED_AT DESC
     </select>
 
-    <!-- 실시간 정원 체크 + 1 증가 (F-305용 기본 버전) -->
+    <!-- 실시간 정원 체크 + 1 증가 -->
     <update id="increaseCurrentCountIfNotFull">
         UPDATE Lecture
         SET LECTURE_CURRENT_COUNT = LECTURE_CURRENT_COUNT + 1
         WHERE LECTURE_ID = #{lectureId}
-          AND LECTURE_CURRENT_COUNT < LECTURE_MAX_CAPACITY
+          AND LECTURE_CURRENT_COUNT &lt; LECTURE_MAX_CAPACITY
     </update>
 
     <!-- 수강 취소 시 정원 -1 -->

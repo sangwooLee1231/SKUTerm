@@ -1,0 +1,509 @@
+:root {
+    --scp-bg: #f4f5fb;
+    --scp-surface: #ffffff;
+    --scp-border-subtle: #e1e4f0;
+    --scp-border-strong: #c9cedd;
+    --scp-primary: #3454d1;
+    --scp-primary-soft: rgba(52, 84, 209, 0.08);
+    --scp-primary-strong: #223694;
+    --scp-accent: #22b5a3;
+    --scp-text-main: #1f2430;
+    --scp-text-muted: #6b7184;
+    --scp-danger: #e74c3c;
+    --scp-radius-lg: 18px;
+    --scp-radius-xl: 24px;
+    --scp-shadow-soft: 0 14px 30px rgba(15, 23, 42, 0.11);
+    --scp-shadow-subtle: 0 4px 12px rgba(15, 23, 42, 0.06);
+    --scp-input-bg: #f7f8ff;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html, body {
+    height: 100%;
+}
+
+body {
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: radial-gradient(circle at top left, #eef1ff 0, #f7f8ff 26%, #f4f5fb 55%, #eef1ff 100%);
+    color: var(--scp-text-main);
+    -webkit-font-smoothing: antialiased;
+}
+
+/* 레이아웃 전체 */
+
+.scp-app-shell {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.scp-header {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    backdrop-filter: blur(18px);
+    background: linear-gradient(
+            to right,
+            rgba(247, 248, 255, 0.88),
+            rgba(249, 250, 255, 0.94)
+    );
+    border-bottom: 1px solid rgba(201, 206, 221, 0.6);
+}
+
+.scp-header-inner {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+/* 브랜드 */
+
+.scp-brand {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.scp-logo-mark {
+    width: 36px;
+    height: 36px;
+    border-radius: 14px;
+    background: radial-gradient(circle at 20% 0, #7b88ff 0, #3454d1 45%, #22b5a3 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: var(--scp-shadow-soft);
+}
+
+.scp-logo-mark span {
+    font-size: 18px;
+    font-weight: 700;
+    color: #ffffff;
+    letter-spacing: 0.02em;
+}
+
+.scp-logo-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.scp-logo-title {
+    font-size: 18px;
+    letter-spacing: 0.04em;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.scp-logo-sub {
+    font-size: 11px;
+    color: var(--scp-text-muted);
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+}
+
+/* 헤더 우측 */
+
+.scp-header-right {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.scp-main-nav {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.scp-nav-item {
+    border-radius: 999px;
+    padding: 6px 14px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--scp-text-muted);
+    border: 1px solid transparent;
+    background: transparent;
+    cursor: pointer;
+    transition: all 0.16s ease-out;
+}
+
+.scp-nav-item:hover {
+    background: rgba(255, 255, 255, 0.7);
+    border-color: var(--scp-border-subtle);
+    color: var(--scp-primary-strong);
+}
+
+.scp-nav-item.is-active {
+    background: var(--scp-primary-soft);
+    border-color: rgba(52, 84, 209, 0.4);
+    color: var(--scp-primary-strong);
+}
+
+.scp-user-badge {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 12px;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 999px;
+    border: 1px solid rgba(201, 206, 221, 0.7);
+    box-shadow: var(--scp-shadow-subtle);
+}
+
+.scp-user-avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 999px;
+    background: linear-gradient(135deg, #3454d1, #22b5a3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.scp-user-meta {
+    display: flex;
+    flex-direction: column;
+}
+
+.scp-user-name {
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.scp-user-role {
+    font-size: 11px;
+    color: var(--scp-text-muted);
+}
+
+.scp-logout-btn {
+    border-radius: 999px;
+    padding: 6px 12px;
+    border: 1px solid var(--scp-border-strong);
+    background: #ffffff;
+    font-size: 12px;
+    cursor: pointer;
+    color: var(--scp-text-main);
+    transition: all 0.14s ease-out;
+}
+
+.scp-logout-btn:hover {
+    border-color: var(--scp-danger);
+    color: var(--scp-danger);
+    transform: translateY(-0.5px);
+}
+
+.scp-nav-toggle {
+    display: none;
+    border: none;
+    background: transparent;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+/* 메인 레이아웃 */
+
+.scp-main {
+    flex: 1;
+    max-width: 1180px;
+    margin: 18px auto 26px;
+    padding: 0 18px 18px;
+    display: grid;
+    grid-template-columns: 260px minmax(0, 1fr);
+    gap: 18px;
+}
+
+/* 사이드바 */
+
+.scp-sidebar {
+    background: linear-gradient(
+            160deg,
+            rgba(255, 255, 255, 0.95),
+            rgba(245, 247, 255, 0.98)
+    );
+    border-radius: var(--scp-radius-xl);
+    padding: 14px 14px 16px;
+    border: 1px solid rgba(225, 228, 240, 0.95);
+    box-shadow: var(--scp-shadow-subtle);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    align-self: flex-start;
+}
+
+.scp-sidebar-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--scp-text-muted);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.scp-sidebar-section {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.scp-sidebar-link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+    padding: 7px 10px;
+    border-radius: 10px;
+    font-size: 13px;
+    color: var(--scp-text-muted);
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.14s ease-out;
+}
+
+.scp-sidebar-link span {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.scp-sidebar-link-badge {
+    font-size: 11px;
+    padding: 2px 6px;
+    border-radius: 999px;
+    background: #eef1ff;
+    color: var(--scp-primary-strong);
+}
+
+.scp-sidebar-link:hover {
+    background: rgba(52, 84, 209, 0.06);
+    color: var(--scp-primary-strong);
+    transform: translateY(-0.5px);
+}
+
+.scp-sidebar-link.is-active {
+    background: var(--scp-primary-soft);
+    color: var(--scp-primary-strong);
+}
+
+.scp-sidebar-meta {
+    margin-top: 6px;
+    padding-top: 10px;
+    border-top: 1px dashed rgba(211, 216, 235, 0.8);
+    font-size: 11px;
+    color: var(--scp-text-muted);
+    line-height: 1.5;
+}
+
+/* 콘텐츠 영역 */
+
+.scp-content {
+    background: rgba(255, 255, 255, 0.98);
+    border-radius: 26px;
+    padding: 20px 22px 22px;
+    border: 1px solid rgba(225, 228, 240, 0.9);
+    box-shadow: var(--scp-shadow-soft);
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.scp-page-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.scp-page-title-block {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.scp-page-title {
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+}
+
+.scp-page-subtitle {
+    font-size: 12px;
+    color: var(--scp-text-muted);
+}
+
+/* 버튼 공통 */
+
+.scp-primary-btn {
+    border-radius: 999px;
+    padding: 7px 14px;
+    border: none;
+    background: linear-gradient(135deg, #3454d1, #22b5a3);
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: var(--scp-shadow-subtle);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: transform 0.13s ease-out, box-shadow 0.13s ease-out;
+}
+
+.scp-primary-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--scp-shadow-soft);
+}
+
+.scp-primary-btn:active {
+    transform: translateY(0);
+    box-shadow: var(--scp-shadow-subtle);
+}
+
+.scp-ghost-btn {
+    border-radius: 999px;
+    padding: 6px 12px;
+    border: 1px dashed rgba(52, 84, 209, 0.5);
+    background: transparent;
+    color: var(--scp-primary-strong);
+    font-size: 12px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.scp-ghost-btn:hover {
+    background: rgba(52, 84, 209, 0.05);
+}
+
+/* 푸터 */
+
+.scp-footer {
+    max-width: 1180px;
+    margin: 0 auto 20px;
+    padding: 0 18px;
+    font-size: 11px;
+    color: var(--scp-text-muted);
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.scp-footer span {
+    opacity: 0.8;
+}
+
+/* 반응형 */
+
+@media (max-width: 960px) {
+    .scp-main {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .scp-sidebar {
+        order: 2;
+    }
+
+    .scp-content {
+        order: 1;
+    }
+}
+
+@media (max-width: 720px) {
+    .scp-header-inner {
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .scp-main-nav {
+        display: none;
+    }
+
+    .scp-nav-toggle {
+        display: block;
+    }
+
+    .scp-main {
+        margin-top: 10px;
+        padding-inline: 12px;
+    }
+
+    .scp-content {
+        border-radius: 18px;
+        padding: 16px 14px 18px;
+    }
+
+    .scp-sidebar {
+        padding: 10px 12px 12px;
+    }
+
+    .scp-page-header {
+        align-items: flex-start;
+    }
+}
+
+/* 모바일 네비게이션 */
+
+.scp-mobile-nav {
+    display: none;
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 0 18px 10px;
+}
+
+.scp-mobile-nav-inner {
+    background: rgba(255, 255, 255, 0.98);
+    border-radius: 16px;
+    border: 1px solid rgba(225, 228, 240, 0.9);
+    box-shadow: var(--scp-shadow-subtle);
+    overflow: hidden;
+}
+
+.scp-mobile-nav-list {
+    list-style: none;
+}
+
+.scp-mobile-nav-item {
+    padding: 9px 14px;
+    font-size: 13px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.scp-mobile-nav-item + .scp-mobile-nav-item {
+    border-top: 1px solid #eef0f7;
+}
+
+.scp-mobile-nav-item span {
+    font-size: 13px;
+}
+
+.scp-mobile-nav-item small {
+    font-size: 11px;
+    color: var(--scp-text-muted);
+}
+
+.scp-mobile-nav-item.is-active {
+    background: var(--scp-primary-soft);
+    color: var(--scp-primary-strong);
+}
+
+@media (max-width: 720px) {
+    .scp-mobile-nav {
+        display: block;
+    }
+}
