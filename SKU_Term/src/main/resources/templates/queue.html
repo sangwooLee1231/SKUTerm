@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+
+<head>
+    <title>접속 대기 중 - Smart Course Portal</title>
+    <link rel="stylesheet" href="/css/queue.css">
+    <script defer src="/js/queue.js"></script>
+</head>
+
+<section layout:fragment="content" class="queue-layout">
+    <div class="queue-container">
+        <div class="queue-header">
+            <div class="pulse-icon">⏳</div>
+            <h1 class="queue-title">서비스 접속 대기 중입니다.</h1>
+            <p class="queue-desc">
+                현재 접속 사용자가 많아 대기 중입니다.<br>
+                잠시만 기다려주시면 자동으로 접속됩니다.
+            </p>
+        </div>
+
+        <div class="queue-status-card">
+            <div class="status-row">
+                <div class="status-item">
+                    <span class="label">내 대기 순서</span>
+                    <span class="value highlight" id="myRank">---</span>
+                    <span class="unit">번째</span>
+                </div>
+                <div class="divider"></div>
+                <div class="status-item">
+                    <span class="label">예상 대기 시간</span>
+                    <span class="value" id="expectedTime">--:--</span>
+                    <span class="unit">남음</span>
+                </div>
+            </div>
+
+            <div class="progress-area">
+                <div class="progress-track">
+                    <div id="progressBar" class="progress-bar"></div>
+                </div>
+                <p class="progress-text">처리 중... <span id="queueTokenInfo" style="font-size:10px; opacity:0.5;"></span></p>
+            </div>
+        </div>
+
+        <div class="queue-footer">
+            <ul class="warning-list">
+                <li> <strong>새로고침</strong>하거나 <strong>브라우저를 닫으면</strong> 대기 순서가 초기화될 수 있습니다.</li>
+                <li> 순서가 되면 자동으로 강의 조회 페이지로 이동합니다.</li>
+            </ul>
+        </div>
+    </div>
+</section>
+</html>

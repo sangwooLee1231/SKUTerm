@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+
+<head>
+    <title>내 시간표 - Smart Course Portal</title>
+    <link rel="stylesheet" href="/css/timetable.css">
+    <script defer src="/js/timetable.js"></script>
+</head>
+
+<section layout:fragment="content">
+    <header class="scp-page-header">
+        <div class="scp-page-title-block">
+            <h1 class="scp-page-title">내 시간표</h1>
+            <p class="scp-page-subtitle">2025학년도 2학기 확정 시간표입니다.</p>
+        </div>
+        <div class="header-actions">
+            <button type="button" id="btnRefresh" class="scp-btn-outline">
+                새로고침
+            </button>
+            <button type="button" id="btnDownload" class="scp-btn-solid">
+                이미지 저장
+            </button>
+        </div>
+    </header>
+
+    <div class="timetable-container">
+        <table class="timetable-grid">
+            <thead>
+            <tr>
+                <th class="th-time">교시</th>
+                <th class="th-day">월</th>
+                <th class="th-day">화</th>
+                <th class="th-day">수</th>
+                <th class="th-day">목</th>
+                <th class="th-day">금</th>
+            </tr>
+            </thead>
+            <tbody id="timetableBody">
+            </tbody>
+        </table>
+    </div>
+</section>
+</html>

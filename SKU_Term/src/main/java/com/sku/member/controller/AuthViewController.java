@@ -11,12 +11,12 @@ public class AuthViewController {
     // 회원가입 페이지
     @GetMapping("/signup")
     public String signUpPage() {
-        return "member/signup";
+        return "signup";
     }
 
     // 로그인 페이지
     @GetMapping("/login")
     public String loginPage() {
-        return "member/login";
+        return "login";
     }
 }

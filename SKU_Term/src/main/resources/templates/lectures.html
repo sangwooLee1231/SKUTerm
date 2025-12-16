@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+
+<head>
+  <title>강의 조회 - Smart Course Portal</title>
+  <link rel="stylesheet" href="/css/lectures.css">
+  <script defer src="/js/lectures.js"></script>
+</head>
+
+<section layout:fragment="content">
+  <header class="scp-page-header">
+    <div class="scp-page-title-block">
+      <h1 class="scp-page-title">강의 조회</h1>
+    </div>
+  </header>
+
+  <div class="search-container">
+    <form id="searchForm" class="search-form" onsubmit="return false;">
+      <div class="search-row-primary">
+        <div class="input-wrapper">
+          <label>강의명</label>
+          <input type="text" name="courseName" class="scp-input-clean" autocomplete="off">
+        </div>
+        <div class="input-wrapper">
+          <label>교수명</label>
+          <input type="text" name="professor" class="scp-input-clean" autocomplete="off">
+        </div>
+        <div class="action-wrapper">
+          <button type="button" id="btnSearch" class="scp-btn-solid">
+            조회
+          </button>
+          <button type="button" id="btnReset" class="scp-btn-outline">
+            초기화
+          </button>
+        </div>
+      </div>
+
+      <div class="search-row-secondary">
+        <div class="filter-item">
+          <span class="filter-label">이수구분</span>
+          <select name="division" class="scp-select-clean">
+            <option value="">전체</option>
+            <option value="MAJOR">전공</option>
+            <option value="GENERAL">교양</option>
+          </select>
+        </div>
+        <div class="filter-item">
+          <span class="filter-label">학점</span>
+          <select name="credit" class="scp-select-clean">
+            <option value="">전체</option>
+            <option value="1">1학점</option>
+            <option value="2">2학점</option>
+            <option value="3">3학점</option>
+          </select>
+        </div>
+        <div class="filter-item">
+          <span class="filter-label">요일</span>
+          <select name="dayOfWeek" class="scp-select-clean">
+            <option value="">전체</option>
+            <option value="MON">월요일</option>
+            <option value="TUE">화요일</option>
+            <option value="WED">수요일</option>
+            <option value="THU">목요일</option>
+            <option value="FRI">금요일</option>
+          </select>
+        </div>
+        <div class="filter-item time-range">
+          <span class="filter-label">시간대</span>
+          <div class="time-inputs">
+            <input type="time" name="startTime" class="scp-input-time">
+            <span>~</span>
+            <input type="time" name="endTime" class="scp-input-time">
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <div class="result-header">
+    <span class="result-count">총 <b id="resultCount">0</b>건의 강의가 조회되었습니다.</span>
+  </div>
+
+  <div id="lectureList" class="lecture-list-stack">
+    <div class="empty-state">
+      <p>상단 검색 조건을 입력하고 <strong>[조회]</strong> 버튼을 눌러주세요.</p>
+    </div>
+  </div>
+</section>
+</html>

@@ -1,0 +1,127 @@
+/* 헤더 액션 버튼 */
+.header-actions {
+    display: flex;
+    gap: 8px;
+}
+.scp-page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 24px;
+}
+
+/* 버튼 스타일 (공통 재사용) */
+.scp-btn-solid {
+    padding: 8px 16px;
+    background: #1f2937;
+    color: #fff;
+    border: 1px solid #1f2937;
+    border-radius: 3px;
+    font-size: 13px;
+    cursor: pointer;
+}
+.scp-btn-outline {
+    padding: 8px 16px;
+    background: #fff;
+    color: #374151;
+    border: 1px solid #d1d5db;
+    border-radius: 3px;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+/* 시간표 컨테이너 */
+.timetable-container {
+    background: #ffffff;
+    border: 1px solid #d1d5db;
+    border-radius: 4px;
+    padding: 20px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    overflow-x: auto; /* 모바일 대응 */
+}
+
+/* 테이블 그리드 */
+.timetable-grid {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed; /* 칸 너비 고정 */
+    min-width: 600px;
+}
+
+.timetable-grid th,
+.timetable-grid td {
+    border: 1px solid #e5e7eb;
+    text-align: center;
+    vertical-align: middle;
+}
+
+/* 헤더 스타일 */
+.timetable-grid thead th {
+    background: #f9fafb;
+    color: #4b5563;
+    font-weight: 700;
+    padding: 12px 0;
+    font-size: 14px;
+}
+.th-time { width: 80px; }
+.th-day { width: auto; }
+
+/* 본문 스타일 */
+.timetable-grid tbody td {
+    height: 100px; /* 교시당 높이 */
+    padding: 4px;
+    font-size: 13px;
+    color: #9ca3af;
+    position: relative;
+}
+
+/* 교시 표시 컬럼 */
+.td-period {
+    background: #f9fafb;
+    color: #111827 !important;
+    font-weight: 600;
+}
+.period-num {
+    display: block;
+    font-size: 16px;
+}
+.period-time {
+    display: block;
+    font-size: 11px;
+    color: #6b7280;
+    margin-top: 4px;
+}
+
+/* 수업이 있는 셀 (Course Cell) */
+.course-cell {
+    background-color: #eff6ff; /* 기본 색상 */
+    border-radius: 4px;
+    padding: 8px;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 4px;
+    text-align: center;
+    color: #1e3a8a;
+    border: 1px solid rgba(0,0,0,0.05);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    transition: transform 0.1s;
+}
+.course-cell:hover {
+    transform: scale(1.02);
+    z-index: 10;
+}
+
+.cc-name { font-weight: 700; font-size: 13px; line-height: 1.3; }
+.cc-room { font-size: 11px; opacity: 0.8; }
+.cc-prof { font-size: 11px; opacity: 0.7; }
+
+/* 과목별 색상 팔레트 (CSS 클래스로 매핑) */
+.color-1 { background: #e0f2fe; color: #075985; border-color: #bae6fd; } /* Sky */
+.color-2 { background: #dcfce7; color: #166534; border-color: #bbf7d0; } /* Green */
+.color-3 { background: #fef3c7; color: #92400e; border-color: #fde68a; } /* Amber */
+.color-4 { background: #fce7f3; color: #9d174d; border-color: #fbcfe8; } /* Pink */
+.color-5 { background: #ede9fe; color: #5b21b6; border-color: #ddd6fe; } /* Violet */
+.color-6 { background: #ffedd5; color: #9a3412; border-color: #fed7aa; } /* Orange */

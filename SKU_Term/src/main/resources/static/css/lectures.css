@@ -1,0 +1,278 @@
+/* ================= Color Variables (Scoped) ================= */
+.scp-page-header {
+    margin-bottom: 24px;
+}
+
+/* ================= Search Container ================= */
+.search-container {
+    background: #ffffff;
+    border: 1px solid #d1d5db; /* 차분한 회색 테두리 */
+    border-radius: 4px; /* 라운딩 최소화 */
+    overflow: hidden;
+    margin-bottom: 30px;
+}
+
+.search-form {
+    display: flex;
+    flex-direction: column;
+}
+
+/* 1열: 텍스트 입력 영역 */
+.search-row-primary {
+    padding: 20px 24px;
+    display: flex;
+    gap: 20px;
+    align-items: flex-end;
+}
+
+.input-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex: 1;
+}
+
+.input-wrapper label {
+    font-size: 13px;
+    font-weight: 700;
+    color: #4b5563;
+}
+
+.scp-input-clean {
+    padding: 10px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 3px;
+    font-size: 14px;
+    transition: border-color 0.2s;
+    background: #f9fafb;
+}
+
+.scp-input-clean:focus {
+    outline: none;
+    border-color: #374151; /* 진한 회색 포커스 */
+    background: #ffffff;
+}
+
+.action-wrapper {
+    display: flex;
+    gap: 8px;
+}
+
+/* 버튼 스타일: 직관적이고 단단한 느낌 */
+.scp-btn-solid {
+    padding: 10px 24px;
+    background: #1f2937; /* 다크 네이비/블랙 */
+    color: #ffffff;
+    border: 1px solid #1f2937;
+    border-radius: 3px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+.scp-btn-solid:hover { background: #111827; }
+
+.scp-btn-outline {
+    padding: 10px 16px;
+    background: #ffffff;
+    color: #374151;
+    border: 1px solid #d1d5db;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.scp-btn-outline:hover { background: #f3f4f6; }
+
+
+/* 2열: 필터 영역 (배경색 구분) */
+.search-row-secondary {
+    background: #f8f9fa; /* 연한 회색 배경 */
+    padding: 16px 24px;
+    border-top: 1px solid #e5e7eb;
+    display: flex;
+    gap: 30px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.filter-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.filter-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #6b7280;
+}
+
+.scp-select-clean {
+    padding: 6px 10px;
+    border: 1px solid #d1d5db;
+    border-radius: 3px;
+    font-size: 13px;
+    background: #ffffff;
+    min-width: 100px;
+}
+
+.time-inputs {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.scp-input-time {
+    padding: 4px 8px;
+    border: 1px solid #d1d5db;
+    border-radius: 3px;
+    font-size: 13px;
+}
+
+
+/* ================= Result Area ================= */
+.result-header {
+    margin-bottom: 12px;
+    font-size: 14px;
+    color: #4b5563;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+}
+
+.lecture-list-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* ================= Wide Card Style ================= */
+.lecture-row-card {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-left: 4px solid transparent; /* 상태 표시용 왼쪽 라인 */
+    border-radius: 4px;
+    padding: 20px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+.lecture-row-card:hover {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    border-color: #d1d5db;
+}
+
+/* [1] 좌측: 강의 기본 정보 */
+.card-section-main {
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.lc-badge-row {
+    display: flex;
+    gap: 6px;
+}
+.lc-badge {
+    font-size: 11px;
+    padding: 2px 6px;
+    border-radius: 2px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+}
+.lc-badge.major { background: #e0f2fe; color: #0369a1; } /* 차분한 블루 */
+.lc-badge.general { background: #f3f4f6; color: #4b5563; } /* 회색 */
+
+.lc-title {
+    font-size: 17px;
+    font-weight: 700;
+    color: #111827;
+    margin: 0;
+}
+.lc-code {
+    font-size: 12px;
+    color: #9ca3af;
+    font-family: monospace;
+}
+
+/* [2] 중앙: 상세 정보 (Grid Layout) */
+.card-section-info {
+    flex: 3;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px 24px;
+    padding: 0 24px;
+    border-left: 1px solid #f3f4f6;
+    border-right: 1px solid #f3f4f6;
+}
+
+.info-item {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+.info-label { font-size: 11px; color: #9ca3af; }
+.info-value { font-size: 14px; color: #374151; font-weight: 500; }
+
+/* [3] 우측: 정원 및 액션 */
+.card-section-action {
+    flex: 1.5;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 12px;
+    padding-left: 24px;
+}
+
+.status-box {
+    text-align: right;
+}
+.status-text {
+    font-size: 13px;
+    font-weight: 600;
+}
+.status-text.available { color: #059669; } /* Green */
+.status-text.full { color: #dc2626; }      /* Red */
+
+.progress-track {
+    width: 100px;
+    height: 4px;
+    background: #e5e7eb;
+    border-radius: 2px;
+    margin-top: 6px;
+    overflow: hidden;
+}
+.progress-bar {
+    height: 100%;
+    background: #059669;
+}
+.progress-bar.full { background: #dc2626; }
+
+.btn-cart-add {
+    width: 100%;
+    padding: 8px;
+    background: #ffffff;
+    border: 1px solid #374151;
+    color: #374151;
+    font-size: 13px;
+    font-weight: 600;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.btn-cart-add:hover {
+    background: #374151;
+    color: #ffffff;
+}
+
+/* Empty State */
+.empty-state {
+    padding: 80px 0;
+    text-align: center;
+    color: #9ca3af;
+    background: #f9fafb;
+    border: 1px dashed #d1d5db;
+    border-radius: 4px;
+}

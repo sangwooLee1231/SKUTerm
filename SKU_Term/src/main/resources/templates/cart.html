@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+
+<head>
+    <title>장바구니 - Smart Course Portal</title>
+    <link rel="stylesheet" href="/css/cart.css">
+    <script defer src="/js/cart.js"></script>
+</head>
+
+<section layout:fragment="content">
+    <header class="scp-page-header">
+        <div class="scp-page-title-block">
+            <h1 class="scp-page-title">장바구니</h1>
+            <p class="scp-page-subtitle">담아둔 강의를 확인하고 선택하여 수강신청합니다.</p>
+        </div>
+    </header>
+
+    <div class="cart-toolbar">
+        <div class="toolbar-left">
+            <label class="check-all-wrapper">
+                <input type="checkbox" id="checkAll" class="scp-checkbox">
+                <span>전체 선택</span>
+            </label>
+            <div class="summary-divider"></div>
+            <span class="summary-text">
+                선택 <strong id="selectedCount">0</strong>건
+                (<span id="selectedCredit">0</span> / 21학점)
+            </span>
+        </div>
+        <div class="toolbar-right">
+            <button type="button" id="btnDeleteSelected" class="scp-btn-outline">
+                선택 삭제
+            </button>
+            <button type="button" id="btnEnrollSelected" class="scp-btn-solid">
+                수강신청
+            </button>
+        </div>
+    </div>
+
+    <div id="cartList" class="cart-list-stack">
+        <div class="empty-state">
+            <p>장바구니 정보를 불러오는 중입니다...</p>
+        </div>
+    </div>
+</section>
+</html>

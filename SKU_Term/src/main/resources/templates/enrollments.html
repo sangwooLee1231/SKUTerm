@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+
+<head>
+    <title>수강신청 내역 - Smart Course Portal</title>
+    <link rel="stylesheet" href="/css/enrollments.css">
+    <script defer src="/js/enrollments.js"></script>
+</head>
+
+<section layout:fragment="content">
+    <header class="scp-page-header">
+        <div class="scp-page-title-block">
+            <h1 class="scp-page-title">수강신청 내역</h1>
+            <p class="scp-page-subtitle">신청 완료된 강의를 확인하고 취소할 수 있습니다.</p>
+        </div>
+    </header>
+
+    <div class="summary-card">
+        <div class="summary-item">
+            <span class="summary-label">신청 과목수</span>
+            <span class="summary-value"><strong id="totalCount">0</strong>건</span>
+        </div>
+        <div class="summary-divider"></div>
+        <div class="summary-item">
+            <span class="summary-label">총 신청 학점</span>
+            <span class="summary-value">
+                <strong id="totalCredit" class="text-blue">0</strong> / 21 학점
+            </span>
+        </div>
+    </div>
+
+    <div id="enrollmentList" class="enrollment-list-stack">
+        <div class="empty-state">
+            <p>수강신청 내역을 불러오는 중입니다...</p>
+        </div>
+    </div>
+</section>
+</html>

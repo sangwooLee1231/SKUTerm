@@ -7,6 +7,7 @@ import com.sku.member.dto.MemberLoginRequestDto;
 import com.sku.member.dto.MemberSignUpRequestDto;
 import com.sku.member.service.AuthService;
 import com.sku.member.service.MemberService;
+import com.sku.queue.service.QueueService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -33,6 +34,7 @@ public class AuthController {
 
     private final AuthService authService;
     private final MemberService memberService;
+    private final QueueService queueService;
 
     @PostMapping("/signup")
     public ResponseEntity<ResponseDto<Map<String, Object>>> signUp(
@@ -136,44 +138,40 @@ public class AuthController {
         );
     }
 
+
     @PostMapping("/logout")
     public ResponseEntity<ResponseDto<Void>> logout(
             @AuthenticationPrincipal org.springframework.security.core.userdetails.User user,
+            HttpServletRequest request,
             HttpServletResponse response
     ) {
-        // 현재 로그인한 학번
         String studentNumber = user.getUsername();
-
-        // Redis에 저장된 refreshToken 삭제
         authService.logout(studentNumber);
 
-        // 쿠키 삭제 (maxAge=0)
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if ("queueToken".equals(cookie.getName())) {
+                    String queueToken = cookie.getValue();
+                    queueService.removeToken(queueToken);
+                    break;
+                }
+            }
+        }
         ResponseCookie accessCookie = ResponseCookie.from("accessToken", "")
-                .httpOnly(true)
-                .secure(false)
-                .path("/")
-                .maxAge(0)
-                .sameSite("Strict")
-                .build();
-
+                .httpOnly(true).secure(false).path("/").maxAge(0).sameSite("Strict").build();
         ResponseCookie refreshCookie = ResponseCookie.from("refreshToken", "")
-                .httpOnly(true)
-                .secure(false)
-                .path("/")
-                .maxAge(0)
-                .sameSite("Strict")
-                .build();
+                .httpOnly(true).secure(false).path("/").maxAge(0).sameSite("Strict").build();
+
+        ResponseCookie queueCookie = ResponseCookie.from("queueToken", "")
+                .path("/").maxAge(0).build();
 
         response.addHeader(HttpHeaders.SET_COOKIE, accessCookie.toString());
         response.addHeader(HttpHeaders.SET_COOKIE, refreshCookie.toString());
+        response.addHeader(HttpHeaders.SET_COOKIE, queueCookie.toString());
 
         return ResponseEntity.ok(
-                new ResponseDto<>(
-                        HttpStatus.OK.value(),
-                        "로그아웃에 성공했습니다.",
-                        null
-                )
+                new ResponseDto<>(HttpStatus.OK.value(), "로그아웃에 성공했습니다.", null)
         );
-
     }
 }

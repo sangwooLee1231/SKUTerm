@@ -1,0 +1,143 @@
+/* 상단 요약 카드 */
+.summary-card {
+    background: #ffffff;
+    border: 1px solid #d1d5db;
+    border-radius: 4px;
+    padding: 24px 30px;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 40px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.summary-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.summary-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.summary-value {
+    font-size: 24px;
+    color: #111827;
+    font-weight: 300;
+}
+.summary-value strong {
+    font-weight: 700;
+}
+.text-blue {
+    color: #0369a1;
+}
+
+.summary-divider {
+    width: 1px;
+    height: 40px;
+    background: #e5e7eb;
+}
+
+/* 리스트 컨테이너 */
+.enrollment-list-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.enrollment-card {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 4px;
+    padding: 20px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: all 0.2s;
+    border-left: 4px solid #059669;
+}
+
+.enrollment-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    border-color: #d1d5db;
+}
+
+.ec-info {
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.ec-badge {
+    display: inline-block;
+    font-size: 11px;
+    padding: 2px 6px;
+    border-radius: 2px;
+    font-weight: 700;
+    width: fit-content;
+}
+.ec-badge.major { background: #e0f2fe; color: #0369a1; }
+.ec-badge.general { background: #f3f4f6; color: #4b5563; }
+
+.ec-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #111827;
+    margin: 0;
+}
+
+.ec-meta {
+    flex: 3;
+    display: grid;
+    grid-template-columns: auto auto;
+    gap: 8px 30px;
+    padding: 0 30px;
+    border-left: 1px solid #f3f4f6;
+    border-right: 1px solid #f3f4f6;
+}
+
+.meta-group {
+    display: flex;
+    flex-direction: column;
+}
+.meta-label { font-size: 11px; color: #9ca3af; margin-bottom: 2px; }
+.meta-value { font-size: 14px; color: #374151; font-weight: 500; }
+
+.ec-action {
+    flex: 0.8;
+    text-align: right;
+    padding-left: 20px;
+}
+
+.btn-cancel {
+    padding: 8px 16px;
+    background: #ffffff;
+    border: 1px solid #ef4444; /* Red border */
+    color: #ef4444;
+    font-size: 13px;
+    font-weight: 600;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-cancel:hover {
+    background: #ef4444;
+    color: #ffffff;
+}
+
+/* Empty State */
+.empty-state {
+    padding: 80px 0;
+    text-align: center;
+    color: #9ca3af;
+    background: #f9fafb;
+    border: 1px dashed #d1d5db;
+    border-radius: 4px;
+}

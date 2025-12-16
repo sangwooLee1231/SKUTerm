@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+
+<head>
+    <title>홈 - Smart Course Portal</title>
+    <style>
+        /* 메인 페이지 전용 스타일 */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr; /* 좌측:우측 = 2:1 */
+            gap: 24px;
+        }
+
+        /* [1] 환영 배너 */
+        .welcome-banner {
+            background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+            color: #ffffff;
+            border-radius: 4px;
+            padding: 32px;
+            margin-bottom: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .wb-content h2 { margin: 0 0 8px 0; font-size: 24px; font-weight: 700; }
+        .wb-content p { margin: 0; opacity: 0.8; font-size: 14px; }
+        .wb-icon { font-size: 48px; opacity: 0.2; }
+
+        /* [2] 카드 공통 */
+        .dash-card {
+            background: #ffffff;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            padding: 24px;
+            height: 100%;
+        }
+        .dc-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #f3f4f6;
+        }
+        .dc-title { font-size: 16px; font-weight: 700; color: #111827; margin: 0; }
+        .dc-more { font-size: 12px; color: #6b7280; text-decoration: none; }
+
+        /* [3] 일정 목록 */
+        .schedule-list { list-style: none; padding: 0; margin: 0; }
+        .schedule-item {
+            display: flex;
+            gap: 12px;
+            padding: 10px 0;
+            border-bottom: 1px dashed #e5e7eb;
+        }
+        .schedule-item:last-child { border-bottom: none; }
+        .sch-date {
+            font-size: 13px;
+            font-weight: 700;
+            color: #0369a1;
+            width: 80px;
+        }
+        .sch-content { font-size: 13px; color: #374151; }
+
+        /* [4] 퀵 메뉴 (바로가기) */
+        .quick-menu-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+        .quick-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 20px;
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 4px;
+            text-decoration: none;
+            color: #374151;
+            transition: all 0.2s;
+        }
+        .quick-btn:hover {
+            background: #ffffff;
+            border-color: #0369a1;
+            color: #0369a1;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+            transform: translateY(-2px);
+        }
+        .qb-icon { font-size: 24px; }
+        .qb-label { font-size: 14px; font-weight: 600; }
+
+        @media (max-width: 768px) {
+            .dashboard-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+
+<section layout:fragment="content">
+    <div class="welcome-banner">
+        <div class="wb-content">
+            <h2>2025학년도 2학기 수강신청</h2>
+            <p>
+                <span th:text="${currentUserText != null} ? ${currentUserText.split('\(')[0]} : '학생'">학생</span>
+                원활한 수강신청을 위해 일정을 확인해주세요.
+            </p>
+        </div>
+        <div class="wb-icon">🎓</div>
+    </div>
+
+    <div class="dashboard-grid">
+        <div class="left-col">
+            <div class="dash-card">
+                <div class="dc-header">
+                    <h3 class="dc-title">📅 수강신청 일정안내</h3>
+                    <span class="dc-more">2025-2학기</span>
+                </div>
+                <ul class="schedule-list">
+                    <li class="schedule-item">
+                        <span class="sch-date">12.01 ~ 12.03</span>
+                        <span class="sch-content">장바구니 담기 기간</span>
+                    </li>
+                    <li class="schedule-item">
+                        <span class="sch-date">12.08 (09:00)</span>
+                        <span class="sch-content"><strong>4학년</strong> 수강신청 (재학생)</span>
+                    </li>
+                    <li class="schedule-item">
+                        <span class="sch-date">12.09 (10:00)</span>
+                        <span class="sch-content"><strong>3학년</strong> 수강신청 (재학생/편입생)</span>
+                    </li>
+                    <li class="schedule-item">
+                        <span class="sch-date">12.10 (10:00)</span>
+                        <span class="sch-content"><strong>2학년</strong> 수강신청</span>
+                    </li>
+                    <li class="schedule-item">
+                        <span class="sch-date">12.11 (10:00)</span>
+                        <span class="sch-content"><strong>1학년</strong> 수강신청 (신입생)</span>
+                    </li>
+                    <li class="schedule-item">
+                        <span class="sch-date">12.12 (09:00)</span>
+                        <span class="sch-content">전체 학년 수강신청 및 정정</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="right-col">
+            <div class="dash-card">
+                <div class="dc-header">
+                    <h3 class="dc-title">⚡ 바로가기</h3>
+                </div>
+                <div class="quick-menu-grid">
+                    <a href="/lectures" class="quick-btn">
+                        <span class="qb-icon">🔍</span>
+                        <span class="qb-label">강의 조회</span>
+                    </a>
+                    <a href="/cart" class="quick-btn">
+                        <span class="qb-icon">🛒</span>
+                        <span class="qb-label">장바구니</span>
+                    </a>
+                    <a href="/enrollments" class="quick-btn">
+                        <span class="qb-icon">📋</span>
+                        <span class="qb-label">신청 내역</span>
+                    </a>
+                    <a href="/timetable" class="quick-btn">
+                        <span class="qb-icon">📅</span>
+                        <span class="qb-label">내 시간표</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+</html>

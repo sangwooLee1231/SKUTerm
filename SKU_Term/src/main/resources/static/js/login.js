@@ -16,43 +16,59 @@ document.addEventListener("DOMContentLoaded", () => {
             const res = await fetch("/api/auth/login", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                credentials: "include", // refresh 토큰 쿠키 사용
-                body: JSON.stringify({
-                    studentNumber: studentNumber,
-                    password: password
-                })
+                credentials: "include",
+                body: JSON.stringify({ studentNumber, password })
             });
 
             const text = await res.text();
             let payload = null;
-            try {
-                payload = text ? JSON.parse(text) : null;
-            } catch (_) {
-                payload = null;
-            }
+            try { payload = text ? JSON.parse(text) : null; } catch (_) {}
 
             if (!res.ok) {
-                const msg =
-                    (payload && payload.message) ||
+                const msg = (payload && payload.message) ||
                     "로그인에 실패했습니다. 학번 또는 비밀번호를 다시 확인해주세요.";
                 setMessage("error", msg);
                 return;
             }
 
-            const msg =
-                (payload && payload.message) || "로그인에 성공했습니다.";
+            setMessage("success", (payload && payload.message) || "로그인에 성공했습니다.");
 
-            setMessage("success", msg);
+            await joinQueueAndRedirect();
 
-            // 로그인 성공 시 이동할 페이지 (대기열 또는 강의목록)
-            setTimeout(() => {
-                window.location.href = "/queue"; // 또는 "/lectures"
-            }, 500);
         } catch (e) {
             console.error(e);
             setMessage("error", "로그인 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
         }
     }
+
+
+    async function joinQueueAndRedirect() {
+        try {
+            const response = await fetch("/api/queue/join", { method: "POST" });
+            const json = await response.json();
+
+            if (response.ok) {
+                const data = json.data;
+                const token = data.queueToken;
+
+                document.cookie = `queueToken=${token}; path=/; max-age=3600`;
+
+                sessionStorage.setItem("queueToken", token);
+
+                if (data.active) {
+                    window.location.href = "/";
+                } else {
+                    window.location.href = "/queue/waiting";
+                }
+            } else {
+                alert("대기열 진입 실패");
+            }
+        } catch (e) {
+            console.error(e);
+            alert("시스템 접속 오류");
+        }
+    }
+
 
     form.addEventListener("submit", (e) => {
         e.preventDefault();

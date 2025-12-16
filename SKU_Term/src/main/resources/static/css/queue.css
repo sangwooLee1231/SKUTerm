@@ -1,0 +1,148 @@
+/* 레이아웃 중앙 정렬 */
+.queue-layout {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 70vh;
+    background: #f3f4f6; /* 아주 연한 회색 배경 */
+}
+
+.queue-container {
+    background: #ffffff;
+    width: 100%;
+    max-width: 480px;
+    border-radius: 8px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    padding: 40px 30px;
+    text-align: center;
+    border: 1px solid #e5e7eb;
+}
+
+/* 상단 헤더 */
+.queue-header { margin-bottom: 30px; }
+
+.pulse-icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+    display: inline-block;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(0.95); opacity: 0.7; }
+    50% { transform: scale(1.1); opacity: 1; }
+    100% { transform: scale(0.95); opacity: 0.7; }
+}
+
+.queue-title {
+    font-size: 22px;
+    font-weight: 700;
+    color: #111827;
+    margin: 0 0 10px 0;
+}
+
+.queue-desc {
+    font-size: 14px;
+    color: #6b7280;
+    line-height: 1.5;
+    margin: 0;
+}
+
+/* 상태 카드 (Rank Box) */
+.queue-status-card {
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 24px 0;
+    margin-bottom: 30px;
+}
+
+.status-row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.status-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 45%;
+}
+
+.divider {
+    width: 1px;
+    height: 40px;
+    background: #d1d5db;
+}
+
+.label {
+    font-size: 13px;
+    color: #6b7280;
+    margin-bottom: 4px;
+}
+
+.value {
+    font-size: 28px;
+    font-weight: 800;
+    color: #1f2937;
+    font-variant-numeric: tabular-nums; /* 숫자 너비 고정 */
+}
+
+.value.highlight { color: #0369a1; } /* 강조색 (Blue) */
+
+.unit { font-size: 12px; color: #9ca3af; }
+
+
+/* 진행률 바 */
+.progress-area {
+    padding: 0 24px;
+    text-align: center;
+}
+
+.progress-track {
+    width: 100%;
+    height: 8px;
+    background: #e5e7eb;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 8px;
+}
+
+.progress-bar {
+    height: 100%;
+    width: 0%; /* JS로 제어 */
+    background: linear-gradient(90deg, #0369a1, #0ea5e9);
+    border-radius: 4px;
+    transition: width 0.5s ease;
+}
+
+.progress-text {
+    font-size: 12px;
+    color: #9ca3af;
+    margin: 0;
+}
+
+/* 하단 경고 */
+.queue-footer {
+    text-align: left;
+    background: #fffbeb; /* 연한 노랑 */
+    border: 1px solid #fde68a;
+    border-radius: 6px;
+    padding: 12px 16px;
+}
+
+.warning-list {
+    margin: 0;
+    padding-left: 0;
+    list-style: none;
+}
+
+.warning-list li {
+    font-size: 12px;
+    color: #92400e;
+    margin-bottom: 4px;
+    line-height: 1.4;
+}
+.warning-list li:last-child { margin-bottom: 0; }

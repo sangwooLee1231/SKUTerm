@@ -38,53 +38,50 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         http
-                // 기본 설정들 비활성화
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
-
-                // URL 별 권한 설정
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
                                 "/",
-                                "/api/auth/login",
-                                "/api/auth/signup",
-                                "/member/login",
-                                "/member/signup",
+                                "/index.html",
+                                "/error",
+                                "/login-required",
+                                "/favicon.ico",
+                                "/api/auth/**",
+                                "/member/**",
                                 "/css/**",
                                 "/js/**",
                                 "/images/**"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
-
-                // 인증/인가 실패 시 JSON 응답
                 .exceptionHandling(exception -> exception
 
-                        // 인증 실패(로그인 안 됨) → 401
                         .authenticationEntryPoint((request, response, authException) -> {
-                            ErrorCode errorCode = ErrorCode.LOGIN_REQUIRED;
-                            HttpStatus status = HttpStatus.valueOf(errorCode.getStatus());
+                            String uri = request.getRequestURI();
 
-                            ResponseDto<Map<String, Object>> body = new ResponseDto<>(
-                                    status.value(),
-                                    errorCode.getMsg(),
-                                    Map.of(
-                                            "code", errorCode.getCode(),
-                                            "path", request.getRequestURI()
-                                    )
-                            );
+                            if (uri.startsWith("/api/")) {
+                                ErrorCode errorCode = ErrorCode.LOGIN_REQUIRED;
+                                HttpStatus status = HttpStatus.valueOf(errorCode.getStatus());
 
-                            response.setStatus(status.value());
-                            response.setContentType("application/json;charset=UTF-8");
+                                ResponseDto<Map<String, Object>> body = new ResponseDto<>(
+                                        status.value(),
+                                        errorCode.getMsg(),
+                                        Map.of("code", errorCode.getCode(), "path", uri)
+                                );
 
-                            String json = new ObjectMapper().writeValueAsString(body);
-                            response.getWriter().write(json);
+                                response.setStatus(status.value());
+                                response.setContentType("application/json;charset=UTF-8");
+                                new ObjectMapper().writeValue(response.getWriter(), body);
+                            }
+                            else {
+                                response.sendRedirect("/login-required");
+                            }
                         })
 
-                        // 인가 실패(권한 부족) → 403
                         .accessDeniedHandler((request, response, accessDeniedException) -> {
                             ErrorCode errorCode = ErrorCode.ACCESS_DENIED;
                             HttpStatus status = HttpStatus.valueOf(errorCode.getStatus());
@@ -92,21 +89,14 @@ public class SecurityConfig {
                             ResponseDto<Map<String, Object>> body = new ResponseDto<>(
                                     status.value(),
                                     errorCode.getMsg(),
-                                    Map.of(
-                                            "code", errorCode.getCode(),
-                                            "path", request.getRequestURI()
-                                    )
+                                    Map.of("code", errorCode.getCode(), "path", request.getRequestURI())
                             );
 
                             response.setStatus(status.value());
                             response.setContentType("application/json;charset=UTF-8");
-
-                            String json = new ObjectMapper().writeValueAsString(body);
-                            response.getWriter().write(json);
+                            new ObjectMapper().writeValue(response.getWriter(), body);
                         })
                 )
-
-                // JWT 인증 필터 등록
                 .addFilterBefore(
                         new JwtAuthenticationFilter(jwtTokenProvider),
                         UsernamePasswordAuthenticationFilter.class
@@ -116,9 +106,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(
-            AuthenticationConfiguration authenticationConfiguration
-    ) throws Exception {
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
 }

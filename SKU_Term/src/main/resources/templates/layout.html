@@ -1,142 +1,128 @@
 <!DOCTYPE html>
-<html lang="ko" data-page="lectures"
+<html lang="ko"
       xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       th:attr="data-page=${pageId}">
 <head>
     <meta charset="UTF-8">
     <title>Smart Course Portal</title>
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <!-- 공통 레이아웃 CSS -->
     <link rel="stylesheet" href="/css/layout.css">
-
-    <!-- 공통 레이아웃 JS -->
     <script defer src="/js/layout.js"></script>
 </head>
 <body>
-<div class="scp-app-shell">
-
-    <!-- 상단 헤더 -->
+<div class="scp-root scp-app-shell">
     <header class="scp-header">
         <div class="scp-header-inner">
-            <div class="scp-brand">
-                <div class="scp-logo-mark">
-                    <span>SC</span>
-                </div>
-                <div class="scp-logo-text">
-                    <div class="scp-logo-title">Smart Course Portal</div>
-                    <div class="scp-logo-sub">Course · Cart · Timetable</div>
-                </div>
-            </div>
-
-            <div class="scp-header-right">
-                <nav class="scp-main-nav" aria-label="Primary">
-                    <button class="scp-nav-item" data-target="dashboard">대시보드</button>
-                    <button class="scp-nav-item" data-target="lectures">강의 목록</button>
-                    <button class="scp-nav-item" data-target="cart">장바구니</button>
-                    <button class="scp-nav-item" data-target="enrollments">내 수강신청</button>
-                    <button class="scp-nav-item" data-target="timetable">내 시간표</button>
-                </nav>
-
-                <div class="scp-user-badge">
-                    <div class="scp-user-avatar" id="scpUserAvatar">S</div>
-                    <div class="scp-user-meta">
-                        <span class="scp-user-name" id="scpUserName">학생</span>
-                        <span class="scp-user-role" id="scpUserMeta">학과 · 학년</span>
+            <a href="/" class="scp-header-left" style="text-decoration: none; color: inherit;">
+                <div class="scp-brand">
+                    <div class="scp-logo-mark">
+                        <span>S</span>
+                    </div>
+                    <div class="scp-logo-text">
+                        <div class="scp-logo-title">Smart Course</div>
+                        <div class="scp-logo-sub">수강신청 시스템</div>
                     </div>
                 </div>
+            </a>
 
-                <button class="scp-logout-btn" type="button" id="scpLogoutBtn">로그아웃</button>
-                <button class="scp-nav-toggle" type="button" aria-label="메뉴 열기">☰</button>
+            <nav class="scp-header-center scp-main-nav" aria-label="Main navigation">
+                <button
+                        type="button"
+                        class="scp-tab scp-nav-item"
+                        data-target="lectures"
+                        data-href="/lectures">
+                    강의 조회/신청
+                </button>
+
+                <button
+                        type="button"
+                        class="scp-tab scp-nav-item"
+                        data-target="cart"
+                        data-href="/cart">
+                    장바구니
+                </button>
+
+                <button
+                        type="button"
+                        class="scp-tab scp-nav-item"
+                        data-target="enrollments"
+                        data-href="/enrollments">
+                    수강신청 내역
+                </button>
+
+                <button
+                        type="button"
+                        class="scp-tab scp-nav-item"
+                        data-target="timetable"
+                        data-href="/timetable">
+                    내 시간표
+                </button>
+            </nav>
+
+            <div class="scp-header-right">
+
+                <th:block th:if="${currentUserText != null}">
+                    <div class="scp-user-badge">
+                        <div class="scp-user-avatar"
+                             th:text="${#strings.substring(currentUserText, 0, 1)}">H</div>
+                        <div class="scp-user-meta">
+                            <div class="scp-user-name"
+                                 th:text="${currentUserText}">
+                                홍길동(2025001)
+                            </div>
+                            <div class="scp-user-role"
+                                 th:text="${currentTermText} ?: '2025-2학기'">
+                                2025-2학기
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="button" id="scpLogoutBtn" class="scp-logout-btn">
+                        로그아웃
+                    </button>
+                </th:block>
+
+                <th:block th:unless="${currentUserText != null}">
+                    <a href="/member/login" class="scp-primary-btn" style="text-decoration: none;">
+                        로그인
+                    </a>
+                </th:block>
+
+                <button type="button" class="scp-nav-toggle">
+                    ≡
+                </button>
             </div>
         </div>
     </header>
 
-    <!-- 모바일용 네비게이션 드롭다운 -->
-    <div class="scp-mobile-nav" id="scpMobileNav">
-        <div class="scp-mobile-nav-inner">
-            <ul class="scp-mobile-nav-list">
-                <li class="scp-mobile-nav-item" data-target="dashboard">
-                    <span>대시보드</span>
-                    <small>요약 보기</small>
-                </li>
-                <li class="scp-mobile-nav-item" data-target="lectures">
-                    <span>강의 목록</span>
-                    <small>신청 가능한 강의</small>
-                </li>
-                <li class="scp-mobile-nav-item" data-target="cart">
-                    <span>장바구니</span>
-                    <small>담아둔 강의</small>
-                </li>
-                <li class="scp-mobile-nav-item" data-target="enrollments">
-                    <span>내 수강신청</span>
-                    <small>신청 내역</small>
-                </li>
-                <li class="scp-mobile-nav-item" data-target="timetable">
-                    <span>내 시간표</span>
-                    <small>주간 시간표</small>
-                </li>
-            </ul>
-        </div>
-    </div>
-
-    <!-- 메인 영역 -->
     <main class="scp-main">
-        <!-- 좌측 사이드바 -->
-        <aside class="scp-sidebar">
-            <div>
-                <div class="scp-sidebar-title">수강 메뉴</div>
-            </div>
-
-            <div class="scp-sidebar-section">
-                <button class="scp-sidebar-link" data-target="dashboard">
-                    <span>대시보드</span>
-                    <span class="scp-sidebar-link-badge">요약</span>
-                </button>
-                <button class="scp-sidebar-link" data-target="lectures">
-                    <span>강의 목록</span>
-                    <span class="scp-sidebar-link-badge">신청</span>
-                </button>
-                <button class="scp-sidebar-link" data-target="cart">
-                    <span>장바구니</span>
-                    <span class="scp-sidebar-link-badge">담긴 강의</span>
-                </button>
-                <button class="scp-sidebar-link" data-target="enrollments">
-                    <span>내 수강신청</span>
-                    <span class="scp-sidebar-link-badge">확정</span>
-                </button>
-                <button class="scp-sidebar-link" data-target="timetable">
-                    <span>내 시간표</span>
-                    <span class="scp-sidebar-link-badge">주간</span>
-                </button>
-            </div>
-
-            <div class="scp-sidebar-section">
-                <div class="scp-sidebar-title">대기열 상태</div>
-                <div class="scp-sidebar-meta">
-                    <div>상태: <strong id="queueStatusText">대기 중</strong></div>
-                    <div>예상 대기시간: <span id="queueEta">-</span></div>
-                </div>
-            </div>
-        </aside>
-        <section class="scp-content" id="scp-page-content" layout:fragment="content">
+        <section class="scp-content" layout:fragment="content" style="grid-column: 1 / -1;">
             <header class="scp-page-header">
                 <div class="scp-page-title-block">
                     <h1 class="scp-page-title">페이지 제목</h1>
-                    <p class="scp-page-subtitle">
-                        이 영역은 각 페이지에서 개별적으로 교체해서 사용합니다.
-                    </p>
+                    <p class="scp-page-subtitle">페이지 설명이 들어갑니다.</p>
                 </div>
             </header>
+            <div class="scp-page-body">
+                <p>컨텐츠 영역</p>
+            </div>
         </section>
     </main>
 
-    <!-- 하단 푸터 -->
     <footer class="scp-footer">
-        <span>Smart Course Portal · 수강신청 시스템</span>
-        <span>© 2025. All rights reserved.</span>
+        <div class="scp-footer-inner">
+            <span>&copy; 2025 Smart Course Portal. SKU Term Project.</span>
+            <span>
+                <a href="#">개인정보처리방침</a> |
+                <a href="#">이용약관</a> |
+                <a href="#">문의하기</a>
+            </span>
+        </div>
     </footer>
+
 </div>
 </body>
 </html>
