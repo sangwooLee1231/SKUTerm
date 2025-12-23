@@ -33,7 +33,7 @@ public class QueueServiceImpl implements QueueService {
     private static final long DEFAULT_THROUGHPUT = 10L;
 
     // 최대 활성 사용자 수 (DB 보호용 절대 상한선)
-    private static final long MAX_ACTIVE_USERS = 1;
+    private static final long MAX_ACTIVE_USERS = 100;
 
     private static final Duration TOKEN_TTL = Duration.ofHours(1);
 
