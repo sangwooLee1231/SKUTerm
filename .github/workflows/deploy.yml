@@ -19,7 +19,8 @@ jobs:
           distribution: 'temurin'
 
       - name: Gradle 빌드 실행
-        run: ./gradlew clean build -x test
+        working-directory: ./SKU_Term 
+        run: chmod +x gradlew && ./gradlew clean build -x test
 
       - name: 서버로 JAR 파일 전송 (SCP)
         uses: appleboy/scp-action@v0.1.7
@@ -27,9 +28,9 @@ jobs:
           host: ${{ secrets.AZURE_VM_IP }}
           username: ${{ secrets.AZURE_VM_USER }}
           key: ${{ secrets.AZURE_SSH_KEY }}
-          source: "build/libs/*.jar"
+          source: "SKU_Term/build/libs/*.jar" 
           target: "/home/azureuser/"
-          strip_components: 2
+          strip_components: 3
 
       - name: 배포 스크립트 실행 (SSH)
         uses: appleboy/ssh-action@v1.0.3
