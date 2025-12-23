@@ -28,7 +28,7 @@ public class QueueServiceImpl implements QueueService {
     private static final String QUEUE_TOKEN_PREFIX = "queue:token:";
     private static final String QUEUE_ACTIVE_SET_KEY = "queue:active";
 
-    // 초당 입장 허용 인원 (Redis로 관리 가능)
+    // 초당 입장 허용 인원
     private static final String KEY_THROUGHPUT = "queue:config:throughput";
     private static final long DEFAULT_THROUGHPUT = 10L;
 
