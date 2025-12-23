@@ -1,5 +1,4 @@
 name: Azure VM CI/CD (SKUTerm)
-
 on:
   push:
     branches: [ "master" ]
@@ -7,7 +6,6 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-
     steps:
       - name: 체크아웃
         uses: actions/checkout@v4
@@ -28,6 +26,7 @@ jobs:
           host: ${{ secrets.AZURE_VM_IP }}
           username: ${{ secrets.AZURE_VM_USER }}
           key: ${{ secrets.AZURE_SSH_KEY }}
+          port: 50000 #
           source: "SKU_Term/build/libs/*.jar" 
           target: "/home/azureuser/"
           strip_components: 3
@@ -38,6 +37,7 @@ jobs:
           host: ${{ secrets.AZURE_VM_IP }}
           username: ${{ secrets.AZURE_VM_USER }}
           key: ${{ secrets.AZURE_SSH_KEY }}
+          port: 50000 #
           script: |
             chmod +x /home/azureuser/deploy.sh
             /home/azureuser/deploy.sh
