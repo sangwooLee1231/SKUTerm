@@ -28,6 +28,9 @@ public interface EnrollmentMapper {
 
     int increaseCurrentCount(@Param("lectureId") Long lectureId);
 
+    // 정원 초과가 아닌 경우에만 원자적으로 +1 (비교군)
+    int increaseCurrentCountIfAvailable(@Param("lectureId") Long lectureId);
+
     // 해당 학생이 신청한 모든 강의의 시간 정보
     List<LectureTime> findEnrolledLectureTimes(@Param("studentId") Long studentId);
 

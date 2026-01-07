@@ -6,6 +6,7 @@ import com.sku.queue.dto.QueueStatusResponseDto;
 import com.sku.queue.service.QueueService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,10 +19,15 @@ public class QueueController {
 
     private final QueueService queueService;
 
+    @Value("${peakguard.queue.admin-reset-enabled:true}")
+    private boolean adminResetEnabled;
+
     @PostMapping("/join")
     public ResponseEntity<ResponseDto<Map<String, Object>>> joinQueue() {
 
         QueueJoinResponseDto result = queueService.joinQueue();
+
+
 
         return ResponseEntity.ok(
                 new ResponseDto<>(
@@ -30,7 +36,8 @@ public class QueueController {
                         Map.of(
                                 "queueToken", result.getQueueToken(),
                                 "queueNumber", result.getQueueNumber(),
-                                "position", result.getPosition()
+                                "position", result.getPosition(),
+                                "active", result.isActive()
                         )
                 )
         );
@@ -53,4 +60,11 @@ public class QueueController {
                 )
         );
     }
+
+    @PostMapping("/reset")
+    public ResponseEntity<ResponseDto<Map<String, Object>>> reset() {
+        Map<String, Object> data = queueService.resetQueueState();
+        return ResponseEntity.ok(new ResponseDto<>(200, "RESET_OK", data));
+    }
+
 }

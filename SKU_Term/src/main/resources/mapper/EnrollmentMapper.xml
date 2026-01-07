@@ -82,6 +82,14 @@
         WHERE LECTURE_ID = #{lectureId}
     </update>
 
+    <!-- 정원 초과가 아닌 경우에만 원자적으로 +1 -->
+    <update id="increaseCurrentCountIfAvailable">
+        UPDATE Lecture
+        SET LECTURE_CURRENT_COUNT = LECTURE_CURRENT_COUNT + 1
+        WHERE LECTURE_ID = #{lectureId}
+          AND LECTURE_CURRENT_COUNT <![CDATA[ < ]]> LECTURE_MAX_CAPACITY
+    </update>
+
     <!-- 수강 취소 시 정원 -1 -->
     <update id="decreaseCurrentCount">
         UPDATE Lecture

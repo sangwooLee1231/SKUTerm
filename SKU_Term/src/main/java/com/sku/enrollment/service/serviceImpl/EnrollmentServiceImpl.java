@@ -4,14 +4,18 @@ import com.sku.common.exception.CustomException;
 import com.sku.common.util.ErrorCode;
 import com.sku.enrollment.dto.EnrollmentListResponseDto;
 import com.sku.enrollment.mapper.EnrollmentMapper;
+import com.sku.enrollment.enums.EnrollmentLockMode;
 import com.sku.lecture.mapper.LectureMapper;
 import com.sku.lecture.vo.Lecture;
 import com.sku.lecture.vo.LectureTime;
 import com.sku.member.mapper.StudentMapper;
 import com.sku.member.vo.Student;
 import com.sku.enrollment.service.EnrollmentService;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
@@ -26,11 +30,33 @@ public class EnrollmentServiceImpl implements EnrollmentService {
     private final LectureMapper lectureMapper;
     private final StudentMapper studentMapper;
 
+    @Value("${peakguard.enrollment.lock-mode:PESSIMISTIC}")
+    private EnrollmentLockMode lockMode;
+
     private static final int MAX_CREDIT = 20;
 
-    // 수강 취소 가능 기간
-    private static final LocalDate ENROLL_START_DATE = LocalDate.of(2025, 3, 1);
-    private static final LocalDate ENROLL_END_DATE   = LocalDate.of(2025, 3, 31);
+    @Value("${peakguard.enrollment.cancel-start-date:2025-03-01}")
+    private String cancelStartDateStr;
+
+    @Value("${peakguard.enrollment.cancel-end-date:2025-03-31}")
+    private String cancelEndDateStr;
+
+    private LocalDate cancelStartDate;
+    private LocalDate cancelEndDate;
+
+    @PostConstruct
+    void initCancelDateRange() {
+        this.cancelStartDate = LocalDate.parse(cancelStartDateStr);
+        this.cancelEndDate = LocalDate.parse(cancelEndDateStr);
+    }
+
+    @Override
+    public void validateCancelPeriod() {
+        LocalDate today = LocalDate.now();
+        if (today.isBefore(cancelStartDate) || today.isAfter(cancelEndDate)) {
+            throw new CustomException(ErrorCode.CANCEL_PERIOD_EXPIRED);
+        }
+    }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -43,7 +69,12 @@ public class EnrollmentServiceImpl implements EnrollmentService {
         }
         Long studentId = student.getId();
 
-        Lecture lecture = enrollmentMapper.findLectureWithLock(lectureId);
+        Lecture lecture;
+        if (lockMode == EnrollmentLockMode.PESSIMISTIC) {
+            lecture = enrollmentMapper.findLectureWithLock(lectureId);
+        } else {
+            lecture = lectureMapper.findById(lectureId);
+        }
         if (lecture == null) {
             throw new CustomException(ErrorCode.LECTURE_NOT_FOUND);
         }
@@ -59,8 +90,10 @@ public class EnrollmentServiceImpl implements EnrollmentService {
             throw new CustomException(ErrorCode.CREDIT_EXCEEDED);
         }
 
-        if (lecture.getCurrentCount() >= lecture.getMaxCapacity()) {
-            throw new CustomException(ErrorCode.ENROLLMENT_CAPACITY_FULL);
+        if (lockMode != EnrollmentLockMode.ATOMIC_UPDATE) {
+            if (lecture.getCurrentCount() >= lecture.getMaxCapacity()) {
+                throw new CustomException(ErrorCode.ENROLLMENT_CAPACITY_FULL);
+            }
         }
 
         List<LectureTime> enrolledTimes = enrollmentMapper.findEnrolledLectureTimes(studentId);
@@ -69,14 +102,28 @@ public class EnrollmentServiceImpl implements EnrollmentService {
             throw new CustomException(ErrorCode.TIME_CONFLICT);
         }
 
-        enrollmentMapper.increaseCurrentCount(lectureId);
-
-        int inserted = enrollmentMapper.insertEnrollment(studentId, lectureId);
-        if (inserted == 0) {
-            throw new CustomException(ErrorCode.ENROLLMENT_FAILED);
+        int inc;
+        if (lockMode == EnrollmentLockMode.ATOMIC_UPDATE) {
+            inc = enrollmentMapper.increaseCurrentCountIfAvailable(lectureId);
+            if (inc == 0) {
+                throw new CustomException(ErrorCode.ENROLLMENT_CAPACITY_FULL);
+            }
+        } else {
+            inc = enrollmentMapper.increaseCurrentCount(lectureId);
         }
 
-        log.info("수강신청 완료(Pessimistic Lock) - studentId={}, lectureId={}", studentId, lectureId);
+
+        try {
+            int inserted = enrollmentMapper.insertEnrollment(studentId, lectureId);
+            if (inserted == 0) {
+                throw new CustomException(ErrorCode.ENROLLMENT_FAILED);
+            }
+        } catch (DataIntegrityViolationException e) {
+            // 유니크 인덱스 충돌 → 이미 신청한 강의
+            throw new CustomException(ErrorCode.ALREADY_ENROLLED);
+        }
+
+        log.info("수강신청 완료(lockMode={}) - studentId={}, lectureId={}", lockMode, studentId, lectureId);
     }
 
     /**
@@ -138,15 +185,7 @@ public class EnrollmentServiceImpl implements EnrollmentService {
         return list;
     }
 
-    /**
-     * 수강 취소 가능 기간 검증
-     */
-    private void validateCancelPeriod() {
-        LocalDate today = LocalDate.now();
-        if (today.isBefore(ENROLL_START_DATE) || today.isAfter(ENROLL_END_DATE)) {
-            throw new CustomException(ErrorCode.CANCEL_PERIOD_EXPIRED);
-        }
-    }
+
 
     /**
      *  시간표 중복 체크
@@ -183,4 +222,6 @@ public class EnrollmentServiceImpl implements EnrollmentService {
         if (a == null || b == null) return false;
         return a.equalsIgnoreCase(b);
     }
+
+
 }

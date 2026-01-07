@@ -6,6 +6,8 @@ import java.util.List;
 
 public interface EnrollmentService {
 
+    void validateCancelPeriod();
+
     // 수강신청
     void enroll(String studentNumber, Long lectureId);
 

@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
@@ -16,8 +17,16 @@ public class QueueAccessInterceptor implements HandlerInterceptor {
 
     private final QueueService queueService;
 
+    @Value("${peakguard.queue.enabled:true}")
+    private boolean queueEnabled;
+
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+
+        // 비교 실험을 위한 Feature Flag: 대기열 기능 비활성화 시 모든 요청 통과
+        if (!queueEnabled) {
+            return true;
+        }
 
         // 쿠키에서 queueToken 찾기
         String queueToken = null;
@@ -43,7 +52,15 @@ public class QueueAccessInterceptor implements HandlerInterceptor {
 
         } catch (Exception e) {
             log.info("대기열 검증 실패(접근 차단): uri={}, token={}", request.getRequestURI(), queueToken);
-            response.sendRedirect("/queue/waiting");
+
+            String uri = request.getRequestURI();
+            if (uri != null && uri.startsWith("/api/")) {
+                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                response.setContentType("application/json;charset=UTF-8");
+                response.getWriter().write("{\"status\":403,\"message\":\"QUEUE_REQUIRED\"}");
+            } else {
+                response.sendRedirect("/queue/waiting");
+            }
             return false;
         }
     }
