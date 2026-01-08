@@ -23,6 +23,17 @@ public class QueueAccessInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 
+        String uri = request.getRequestURI();
+
+        if (uri != null && (
+                "/health".equals(uri) ||
+                        "/health/".equals(uri) ||
+                        uri.startsWith("/actuator/health")
+        )) {
+            return true;
+        }
+
+
         // 비교 실험을 위한 Feature Flag: 대기열 기능 비활성화 시 모든 요청 통과
         if (!queueEnabled) {
             return true;
@@ -53,7 +64,6 @@ public class QueueAccessInterceptor implements HandlerInterceptor {
         } catch (Exception e) {
             log.info("대기열 검증 실패(접근 차단): uri={}, token={}", request.getRequestURI(), queueToken);
 
-            String uri = request.getRequestURI();
             if (uri != null && uri.startsWith("/api/")) {
                 response.setStatus(HttpServletResponse.SC_FORBIDDEN);
                 response.setContentType("application/json;charset=UTF-8");

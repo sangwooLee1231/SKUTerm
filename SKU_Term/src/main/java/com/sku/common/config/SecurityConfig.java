@@ -54,7 +54,8 @@ public class SecurityConfig {
                                 "/member/**",
                                 "/css/**",
                                 "/js/**",
-                                "/images/**"
+                                "/images/**",
+                                "/health"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )

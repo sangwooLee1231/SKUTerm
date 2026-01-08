@@ -62,9 +62,13 @@ public class QueueController {
     }
 
     @PostMapping("/reset")
-    public ResponseEntity<ResponseDto<Map<String, Object>>> reset() {
-        Map<String, Object> data = queueService.resetQueueState();
-        return ResponseEntity.ok(new ResponseDto<>(200, "RESET_OK", data));
+    public ResponseEntity<ResponseDto<String>> resetQueue() {
+        if (!adminResetEnabled) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ResponseDto<>(404, "NOT_FOUND", "reset disabled"));
+        }
+        queueService.resetQueueState();
+        return ResponseEntity.ok(new ResponseDto<>(200, "OK", "Queue reset"));
     }
 
 }
