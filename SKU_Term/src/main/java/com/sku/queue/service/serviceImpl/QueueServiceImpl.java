@@ -12,7 +12,6 @@ import org.springframework.data.redis.connection.DataType;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.util.HashMap;
@@ -70,7 +69,7 @@ public class QueueServiceImpl implements QueueService {
             stringRedisTemplate.opsForZSet().remove(QUEUE_WAITING_ZSET_KEY, token);
             stringRedisTemplate.opsForZSet().add(QUEUE_ACTIVE_ZSET_KEY, token, (double) nextExpireAtMs(nowMs));
             isActive = true;
-            log.info("대기열 즉시 입장(FastPass) - token={}", token);
+            log.info("대기열 즉시 입장(FastPass) - token={}", maskToken(token));
         }
 
         return new QueueJoinResponseDto(token, queueNumber, position, isActive);
@@ -226,19 +225,20 @@ private String generateToken() {
             stringRedisTemplate.opsForZSet().remove(QUEUE_ACTIVE_ZSET_KEY, queueToken);
             stringRedisTemplate.delete(QUEUE_TOKEN_PREFIX + queueToken);
 
-            log.info("대기열 토큰 삭제 완료: {}", queueToken);
+            log.info("대기열 토큰 삭제 완료: {}", maskToken(queueToken));
         }
     }
 
     @Override
     public Map<String, Object> resetQueueState() {
-        stringRedisTemplate.delete("queue:counter");
-        stringRedisTemplate.delete("queue:waiting");
-        stringRedisTemplate.delete("queue:active");
-        stringRedisTemplate.delete("queue:throughput");
+        stringRedisTemplate.delete(QUEUE_COUNTER_KEY);
+        stringRedisTemplate.delete(QUEUE_WAITING_ZSET_KEY);
+        stringRedisTemplate.delete(QUEUE_ACTIVE_ZSET_KEY);
+        stringRedisTemplate.delete(KEY_THROUGHPUT);
+
 
         // queue:token:* 삭제 (로컬이므로 KEYS 사용 OK)
-        Set<String> tokenKeys = stringRedisTemplate.keys("queue:token:*");
+        Set<String> tokenKeys = stringRedisTemplate.keys(QUEUE_TOKEN_PREFIX + "*");
         int tokenKeyCount = (tokenKeys == null) ? 0 : tokenKeys.size();
 
         long deletedTokenKeys = 0L;
@@ -253,5 +253,13 @@ private String generateToken() {
         result.put("tokenKeyMatched", tokenKeyCount);
         result.put("tokenKeyDeleted", deletedTokenKeys);
         return result;
+    }
+
+    @Override
+    public String maskToken(String token) {
+        if (token == null || token.isBlank()) return "(empty)";
+        final int visible = 8;
+        if (token.length() <= visible) return token;
+        return token.substring(0, visible) + "****";
     }
 }

@@ -109,6 +109,15 @@
             FOR UPDATE
     </select>
 
+    <update id="recalculateLectureCurrentCounts">
+        UPDATE Lecture L
+        SET L.LECTURE_CURRENT_COUNT = (
+            SELECT COUNT(*)
+            FROM Enrollment E
+            WHERE E.ENROLLMENT_LECTURE_ID = L.LECTURE_ID
+        )
+    </update>
+
 
 
 </mapper>

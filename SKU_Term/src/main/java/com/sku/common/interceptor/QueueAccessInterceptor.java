@@ -62,7 +62,7 @@ public class QueueAccessInterceptor implements HandlerInterceptor {
             return true;
 
         } catch (Exception e) {
-            log.info("대기열 검증 실패(접근 차단): uri={}, token={}", request.getRequestURI(), queueToken);
+            log.info("대기열 검증 실패(접근 차단): uri={}, token={}", request.getRequestURI(), queueService.maskToken(queueToken));
 
             if (uri != null && uri.startsWith("/api/")) {
                 response.setStatus(HttpServletResponse.SC_FORBIDDEN);
@@ -74,4 +74,6 @@ public class QueueAccessInterceptor implements HandlerInterceptor {
             return false;
         }
     }
+
+
 }

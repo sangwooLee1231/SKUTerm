@@ -17,4 +17,5 @@ public interface QueueService {
     void removeToken(String queueToken);
     Map<String, Object> resetQueueState();
 
+    String maskToken(String token);
 }

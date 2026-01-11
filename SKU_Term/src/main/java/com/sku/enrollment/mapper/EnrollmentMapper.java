@@ -41,4 +41,7 @@ public interface EnrollmentMapper {
     Lecture findLectureWithLock(@Param("lectureId") Long lectureId);
     // 정원 감소
     int decreaseCurrentCount(@Param("lectureId") Long lectureId);
+
+    int recalculateLectureCurrentCounts();
+
 }

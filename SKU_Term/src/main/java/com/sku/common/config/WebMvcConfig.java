@@ -22,6 +22,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
                         "/api/auth/**",
                         "/queue/**",
                         "/api/queue/**",
+                        "/api/admin/**",
                         "/css/**",
                         "/js/**",
                         "/images/**",

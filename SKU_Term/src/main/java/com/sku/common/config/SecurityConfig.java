@@ -58,7 +58,9 @@ public class SecurityConfig {
                                 "/js/**",
                                 "/images/**",
                                 "/health"
-                        ).permitAll()
+                        )
+                        .permitAll()
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .requestMatchers("/api/auth/logout").authenticated()
                         .anyRequest().authenticated()
                 )
