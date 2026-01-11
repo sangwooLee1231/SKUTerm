@@ -27,6 +27,13 @@ public class AuthServiceImpl implements AuthService {
     private final JwtTokenProvider jwtTokenProvider;
     private final RedisTemplate<String, String> redisTemplate;
     private final StudentMapper studentMapper;
+    private static final String REFRESH_KEY_PREFIX = "auth:refresh:";
+
+
+    @Override
+    public String refreshKey(String studentNumber) {
+        return REFRESH_KEY_PREFIX + studentNumber;
+    }
 
     @Override
     public Map<String, String> login(String studentNumber, String password) {
@@ -55,13 +62,9 @@ public class AuthServiceImpl implements AuthService {
         String accessToken = jwtTokenProvider.createAccessToken(authentication);
         String refreshToken = jwtTokenProvider.createRefreshToken(authentication);
 
-        // Redis 저장 (Key: studentNumber)
-        redisTemplate.opsForValue().set(
-                studentNumber, // key를 학번으로 저장
-                refreshToken,
-                6,
-                TimeUnit.HOURS
-        );
+        String key = refreshKey(studentNumber);
+        redisTemplate.delete(studentNumber);
+        redisTemplate.opsForValue().set(key, refreshToken, 6, TimeUnit.HOURS);
 
         Map<String, String> tokens = new HashMap<>();
         tokens.put("accessToken", accessToken);
@@ -85,11 +88,13 @@ public class AuthServiceImpl implements AuthService {
         // RefreshToken으로부터 사용자 정보 추출
         Authentication authentication = jwtTokenProvider.getAuthentication(refreshToken);
         String studentNumber = authentication.getName();
+        String key = refreshKey(studentNumber);
 
-        // Redis에 저장된 RefreshToken 조회
-        String storedRefreshToken = redisTemplate.opsForValue().get(studentNumber);
+        String storedRefreshToken = redisTemplate.opsForValue().get(key);
+        if (storedRefreshToken == null) {
+            storedRefreshToken = redisTemplate.opsForValue().get(studentNumber);
+        }
 
-        // Redis에 없거나, 값이 다르면 유효하지 않은(혹은 탈취된) 토큰
         if (storedRefreshToken == null || !storedRefreshToken.equals(refreshToken)) {
             throw new CustomException(ErrorCode.SESSION_EXPIRED);
         }
@@ -98,13 +103,10 @@ public class AuthServiceImpl implements AuthService {
         String newAccessToken = jwtTokenProvider.createAccessToken(authentication);
         String newRefreshToken = jwtTokenProvider.createRefreshToken(authentication);
 
-        // Redis 갱신
-        redisTemplate.opsForValue().set(
-                studentNumber,
-                newRefreshToken,
-                6,
-                TimeUnit.HOURS
-        );
+
+
+        redisTemplate.delete(studentNumber);
+        redisTemplate.opsForValue().set(key, newRefreshToken, 6, TimeUnit.HOURS);
 
         // 반환
         Map<String, String> tokens = new HashMap<>();
@@ -115,6 +117,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public void logout(String studentNumber) {
+        redisTemplate.delete(refreshKey(studentNumber));
         redisTemplate.delete(studentNumber);
         log.info("Logout - refreshToken removed for studentNumber={}", studentNumber);
     }
