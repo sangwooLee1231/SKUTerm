@@ -2,6 +2,7 @@ package com.sku.member.controller;
 
 import com.sku.common.dto.ResponseDto;
 import com.sku.common.exception.CustomException;
+import com.sku.common.util.CookieFactory;
 import com.sku.common.util.ErrorCode;
 import com.sku.member.dto.MemberLoginRequestDto;
 import com.sku.member.dto.MemberSignUpRequestDto;
@@ -14,6 +15,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.catalina.User;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
@@ -35,6 +37,8 @@ public class AuthController {
     private final AuthService authService;
     private final MemberService memberService;
     private final QueueService queueService;
+    private final CookieFactory cookieFactory;
+
 
     @PostMapping("/signup")
     public ResponseEntity<ResponseDto<Map<String, Object>>> signUp(
@@ -50,39 +54,15 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@Valid @RequestBody MemberLoginRequestDto request, HttpServletResponse response) {
-        // 서비스 로그인 로직 수행
+    public ResponseEntity<?> login(@Valid @RequestBody MemberLoginRequestDto request,
+                                   HttpServletResponse response) {
+
         Map<String, String> tokens = authService.login(request.getStudentNumber(), request.getPassword());
 
-        // Access Token 쿠키 생성 (1시간)
-        ResponseCookie accessCookie = ResponseCookie.from("accessToken", tokens.get("accessToken"))
-                .httpOnly(true)          // JavaScript에서 접근 불가 (XSS 방지)
-                .secure(false)           // HTTP에서도 전송 가능 (HTTPS 적용 시 true로 변경 필요)
-                .path("/")               // 모든 경로에서 쿠키 전송
-                .maxAge(60 * 60)         // 1시간 (3600초)
-                .sameSite("Strict")      // CSRF 방지 강화
-                .build();
+        response.addHeader(HttpHeaders.SET_COOKIE, cookieFactory.accessToken(tokens.get("accessToken")).toString());
+        response.addHeader(HttpHeaders.SET_COOKIE, cookieFactory.refreshToken(tokens.get("refreshToken")).toString());
 
-        // Refresh Token 쿠키 생성 (6시간)
-        ResponseCookie refreshCookie = ResponseCookie.from("refreshToken", tokens.get("refreshToken"))
-                .httpOnly(true)
-                .secure(false)
-                .path("/")
-                .maxAge(60 * 60 * 6)
-                .sameSite("Strict")
-                .build();
-
-        // 응답 헤더에 쿠키 추가
-        response.addHeader(HttpHeaders.SET_COOKIE, accessCookie.toString());
-        response.addHeader(HttpHeaders.SET_COOKIE, refreshCookie.toString());
-
-        return ResponseEntity.ok(
-                new ResponseDto<>(
-                        HttpStatus.OK.value(),
-                        "로그인에 성공했습니다.",
-                        Map.of("accessToken", tokens.get("accessToken"))
-                )
-        );
+        return ResponseEntity.ok(new ResponseDto<>(HttpStatus.OK.value(), "로그인에 성공했습니다.", null));
     }
 
     @PostMapping("/refresh")
@@ -109,72 +89,27 @@ public class AuthController {
         // 서비스에 재발급 요청
         Map<String, String> tokens = authService.reissue(refreshToken);
 
-        // 새 Access/Refresh 토큰을 쿠키로 재설정
-        ResponseCookie accessCookie = ResponseCookie.from("accessToken", tokens.get("accessToken"))
-                .httpOnly(true)
-                .secure(false)
-                .path("/")
-                .maxAge(60 * 60)
-                .sameSite("Strict")
-                .build();
+        response.addHeader(HttpHeaders.SET_COOKIE, cookieFactory.accessToken(tokens.get("accessToken")).toString());
+        response.addHeader(HttpHeaders.SET_COOKIE, cookieFactory.refreshToken(tokens.get("refreshToken")).toString());
 
-        ResponseCookie refreshCookie = ResponseCookie.from("refreshToken", tokens.get("refreshToken"))
-                .httpOnly(true)
-                .secure(false)
-                .path("/")
-                .maxAge(60 * 60 * 6)
-                .sameSite("Strict")
-                .build();
-
-        response.addHeader(HttpHeaders.SET_COOKIE, accessCookie.toString());
-        response.addHeader(HttpHeaders.SET_COOKIE, refreshCookie.toString());
-
-        return ResponseEntity.ok(
-                new ResponseDto<>(
-                        HttpStatus.OK.value(),
-                        "토큰 재발급 성공.",
-                        Map.of("accessToken", tokens.get("accessToken"))
-                )
-        );
+        return ResponseEntity.ok(new ResponseDto<>(HttpStatus.OK.value(), "토큰 재발급 성공.", null));
     }
 
 
     @PostMapping("/logout")
-    public ResponseEntity<ResponseDto<Void>> logout(
-            @AuthenticationPrincipal org.springframework.security.core.userdetails.User user,
-            HttpServletRequest request,
-            HttpServletResponse response
-    ) {
-        if (user == null) {
-            throw new CustomException(ErrorCode.LOGIN_REQUIRED);
-        }
-        String studentNumber = user.getUsername();
-        authService.logout(studentNumber);
+    public ResponseEntity<ResponseDto<Void>> logout(@AuthenticationPrincipal User user,
+                                                    HttpServletRequest request,
+                                                    HttpServletResponse response) {
 
-        Cookie[] cookies = request.getCookies();
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                if ("queueToken".equals(cookie.getName())) {
-                    String queueToken = cookie.getValue();
-                    queueService.removeToken(queueToken);
-                    break;
-                }
-            }
-        }
-        ResponseCookie accessCookie = ResponseCookie.from("accessToken", "")
-                .httpOnly(true).secure(false).path("/").maxAge(0).sameSite("Strict").build();
-        ResponseCookie refreshCookie = ResponseCookie.from("refreshToken", "")
-                .httpOnly(true).secure(false).path("/").maxAge(0).sameSite("Strict").build();
+        // (PR-01에서 이미 처리했겠지만) 안전장치
+        if (user == null) throw new CustomException(ErrorCode.LOGIN_REQUIRED);
 
-        ResponseCookie queueCookie = ResponseCookie.from("queueToken", "")
-                .path("/").maxAge(0).build();
+        authService.logout(user.getUsername());
 
-        response.addHeader(HttpHeaders.SET_COOKIE, accessCookie.toString());
-        response.addHeader(HttpHeaders.SET_COOKIE, refreshCookie.toString());
-        response.addHeader(HttpHeaders.SET_COOKIE, queueCookie.toString());
+        response.addHeader(HttpHeaders.SET_COOKIE, cookieFactory.clearAccessToken().toString());
+        response.addHeader(HttpHeaders.SET_COOKIE, cookieFactory.clearRefreshToken().toString());
+        response.addHeader(HttpHeaders.SET_COOKIE, cookieFactory.clearQueueToken().toString());
 
-        return ResponseEntity.ok(
-                new ResponseDto<>(HttpStatus.OK.value(), "로그아웃에 성공했습니다.", null)
-        );
+        return ResponseEntity.ok(new ResponseDto<>(HttpStatus.OK.value(), "로그아웃에 성공했습니다.", null));
     }
 }
