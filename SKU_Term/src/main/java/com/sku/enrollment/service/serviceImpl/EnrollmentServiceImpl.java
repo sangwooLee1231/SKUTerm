@@ -63,7 +63,7 @@ public class EnrollmentServiceImpl implements EnrollmentService {
     public void enroll(String studentNumber, Long lectureId) {
 
 
-        Student student = studentMapper.findByStudentNumber(studentNumber);
+        Student student = studentMapper.findByStudentNumberForUpdate(studentNumber);
         if (student == null) {
             throw new CustomException(ErrorCode.STUDENT_NOT_FOUND);
         }
@@ -140,7 +140,7 @@ public class EnrollmentServiceImpl implements EnrollmentService {
         }
 
         //  학생 조회
-        Student student = studentMapper.findByStudentNumber(studentNumber);
+        Student student = studentMapper.findByStudentNumberForUpdate(studentNumber);
         if (student == null) {
             throw new CustomException(ErrorCode.STUDENT_NOT_FOUND);
         }

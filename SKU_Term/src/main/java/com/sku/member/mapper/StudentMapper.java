@@ -13,4 +13,7 @@ public interface StudentMapper {
     int insertStudent(Student student);
 
 
+    Student findByStudentNumberForUpdate(@Param("studentNumber") String studentNumber);
+
+
 }

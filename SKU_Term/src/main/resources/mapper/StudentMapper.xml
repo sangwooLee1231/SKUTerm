@@ -25,6 +25,19 @@
         WHERE STUDENT_NUMBER = #{studentNumber}
     </select>
 
+    <select id="findByStudentNumberForUpdate" resultType="com.sku.member.vo.Student">
+        SELECT
+            STUDENT_ID          AS id,
+            STUDENT_NUMBER      AS studentNumber,
+            STUDENT_PASSWORD    AS password,
+            STUDENT_NAME        AS name,
+            STUDENT_DEPARTMENT  AS department,
+            STUDENT_GRADE       AS grade,
+            STUDENT_ROLE        AS role
+        FROM Student
+        WHERE STUDENT_NUMBER = #{studentNumber}
+            FOR UPDATE
+    </select>
     <!-- 회원가입 insert -->
     <insert id="insertStudent" parameterType="com.sku.member.vo.Student"
             useGeneratedKeys="true" keyProperty="id">
