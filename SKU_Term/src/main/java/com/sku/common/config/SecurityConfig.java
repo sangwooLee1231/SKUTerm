@@ -50,13 +50,16 @@ public class SecurityConfig {
                                 "/error",
                                 "/login-required",
                                 "/favicon.ico",
-                                "/api/auth/**",
+                                "/api/auth/login",
+                                "/api/auth/signup",
+                                "/api/auth/refresh",
                                 "/member/**",
                                 "/css/**",
                                 "/js/**",
                                 "/images/**",
                                 "/health"
                         ).permitAll()
+                        .requestMatchers("/api/auth/logout").authenticated()
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(exception -> exception

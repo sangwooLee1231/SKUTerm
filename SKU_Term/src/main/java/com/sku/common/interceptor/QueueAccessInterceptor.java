@@ -17,7 +17,7 @@ public class QueueAccessInterceptor implements HandlerInterceptor {
 
     private final QueueService queueService;
 
-    @Value("${peakguard.queue.enabled:true}")
+    @Value("${peakguard.queue.enabled:false}")
     private boolean queueEnabled;
 
     @Override

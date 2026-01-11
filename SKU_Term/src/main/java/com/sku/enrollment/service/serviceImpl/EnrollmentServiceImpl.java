@@ -30,7 +30,7 @@ public class EnrollmentServiceImpl implements EnrollmentService {
     private final LectureMapper lectureMapper;
     private final StudentMapper studentMapper;
 
-    @Value("${peakguard.enrollment.lock-mode:PESSIMISTIC}")
+    @Value("${peakguard.enrollment.lock-mode:NONE}")
     private EnrollmentLockMode lockMode;
 
     private static final int MAX_CREDIT = 20;

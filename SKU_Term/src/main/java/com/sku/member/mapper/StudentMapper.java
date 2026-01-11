@@ -11,4 +11,6 @@ public interface StudentMapper {
     int existsByStudentNumber(@Param("studentNumber") String studentNumber);
 
     int insertStudent(Student student);
+
+
 }

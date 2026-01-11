@@ -3,11 +3,13 @@ package com.sku.member.service.serviceImpl;
 import com.sku.common.exception.CustomException;
 import com.sku.common.jwt.JwtTokenProvider;
 import com.sku.common.util.ErrorCode;
+import com.sku.member.mapper.StudentMapper;
 import com.sku.member.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
@@ -24,9 +26,24 @@ public class AuthServiceImpl implements AuthService {
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider jwtTokenProvider;
     private final RedisTemplate<String, String> redisTemplate;
+    private final StudentMapper studentMapper;
 
     @Override
     public Map<String, String> login(String studentNumber, String password) {
+        int exists = studentMapper.existsByStudentNumber(studentNumber);
+
+        if (exists == 0) {
+            throw new CustomException(ErrorCode.STUDENT_NOT_FOUND);
+        }
+
+        try {
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(studentNumber, password)
+            );
+        } catch (BadCredentialsException e) {
+            throw new CustomException(ErrorCode.PASSWORD_MISMATCH);
+        }
+
         // ID/PW 인증 요청
         UsernamePasswordAuthenticationToken authenticationToken =
                 new UsernamePasswordAuthenticationToken(studentNumber, password);

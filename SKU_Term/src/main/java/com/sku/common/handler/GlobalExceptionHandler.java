@@ -7,11 +7,15 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import com.sku.common.dto.ErrorResponse;
 
+import javax.naming.AuthenticationException;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -133,4 +137,41 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.status(status).body(body);
     }
+
+    @ExceptionHandler(AuthenticationException.class)
+    protected ResponseEntity<ResponseDto<Map<String, Object>>> handleAuthenticationException(
+            AuthenticationException e,
+            HttpServletRequest request
+    ) {
+        ErrorCode errorCode = ErrorCode.PASSWORD_MISMATCH;
+        HttpStatus status = HttpStatus.valueOf(errorCode.getStatus());
+
+        log.warn("AuthenticationException: path={}, message={}",
+                request.getRequestURI(), e.getMessage());
+
+        Map<String, Object> data = Map.of(
+                "code", errorCode.getCode(),
+                "path", request.getRequestURI()
+        );
+
+        ResponseDto<Map<String, Object>> body =
+                new ResponseDto<>(status.value(), errorCode.getMsg(), data);
+
+        return ResponseEntity.status(status).body(body);
+    }
+
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<ErrorResponse> handleBadCredentials(BadCredentialsException e, HttpServletRequest req) {
+        return ResponseEntity
+                .status(ErrorCode.PASSWORD_MISMATCH.getStatus())
+                .body(ErrorResponse.of(ErrorCode.PASSWORD_MISMATCH, req.getRequestURI()));
+    }
+
+    @ExceptionHandler(UsernameNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleUsernameNotFound(UsernameNotFoundException e, HttpServletRequest req) {
+        return ResponseEntity
+                .status(ErrorCode.STUDENT_NOT_FOUND.getStatus())
+                .body(ErrorResponse.of(ErrorCode.STUDENT_NOT_FOUND, req.getRequestURI()));
+    }
+
 }

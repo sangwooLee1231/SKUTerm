@@ -50,7 +50,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody MemberLoginRequestDto request, HttpServletResponse response) {
+    public ResponseEntity<?> login(@Valid @RequestBody MemberLoginRequestDto request, HttpServletResponse response) {
         // 서비스 로그인 로직 수행
         Map<String, String> tokens = authService.login(request.getStudentNumber(), request.getPassword());
 
@@ -145,6 +145,9 @@ public class AuthController {
             HttpServletRequest request,
             HttpServletResponse response
     ) {
+        if (user == null) {
+            throw new CustomException(ErrorCode.LOGIN_REQUIRED);
+        }
         String studentNumber = user.getUsername();
         authService.logout(studentNumber);
 
