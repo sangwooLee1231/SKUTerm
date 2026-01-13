@@ -93,4 +93,4 @@ jobs:
             --publisher Microsoft.Azure.Extensions \
             --version 2.1 \
             --settings "{\"fileUris\":[\"${{ env.DEPLOY_URL }}\"],\"commandToExecute\":\"bash deploy.sh '${{ env.JAR_URL }}'\"}" \
-            --force-update true
+            --force-update
