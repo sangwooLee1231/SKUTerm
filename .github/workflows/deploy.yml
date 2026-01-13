@@ -94,3 +94,13 @@ jobs:
             --version 2.1 \
             --settings "{\"fileUris\":[\"${{ env.DEPLOY_URL }}\"],\"commandToExecute\":\"bash deploy.sh '${{ env.JAR_URL }}'\"}" \
             --force-update
+
+      - name: Apply to instances (Manual upgrade policy)
+        shell: bash
+        run: |
+          set -euo pipefail
+          RG="${{ secrets.RG_NAME }}"
+          VMSS="${{ secrets.VMSS_NAME }}"
+          IDS=$(az vmss list-instances -g "$RG" -n "$VMSS" --query "[].instanceId" -o tsv | tr '\n' ' ')
+          az vmss update-instances -g "$RG" -n "$VMSS" --instance-ids $IDS
+
