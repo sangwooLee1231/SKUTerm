@@ -7,6 +7,7 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v4
 
@@ -16,21 +17,27 @@ jobs:
           distribution: temurin
           java-version: "17"
 
+
       - name: Build (Gradle)
-        run: ./gradlew clean build -x test
+        working-directory: ./SKU_Term
+        run: |
+          chmod +x gradlew
+          ./gradlew clean build -x test
 
       - name: Azure Login
         uses: azure/login@v2
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
+
       - name: Upload artifacts to Blob
         shell: bash
         run: |
           set -euo pipefail
-          JAR_PATH=$(ls build/libs/*.jar | head -n 1)
+          JAR_PATH=$(ls SKU_Term/build/libs/*.jar | head -n 1)
           SHA=${GITHUB_SHA::7}
           BLOB_JAR="app-${SHA}.jar"
+          echo "BLOB_JAR=$BLOB_JAR" >> $GITHUB_ENV
 
           az storage blob upload \
             --account-name "${{ secrets.ST_ACCOUNT }}" \
