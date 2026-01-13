@@ -61,6 +61,7 @@ jobs:
             --permissions r \
             --expiry "$EXPIRY" \
             --https-only \
+            --as-user \
             --auth-mode login \
             -o tsv)
 
